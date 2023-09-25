@@ -13,32 +13,39 @@ state= 1
 radius=0.3
 
 def bumper_hit():
-  bumper_value=HAL.getBumperData().bumper
-  #print(bumper_value)
-  if bumper_value == 0:
-    print("izq")
-    HAL.setW(1)
-    HAL.setV(0)
-    return "hit"
-  if bumper_value == 1:
-    print("centro")
-    HAL.setV(-1)
-    HAL.setW(0)
-    return "hit"
-  if bumper_value == 2:
-    print("dcha")
-    HAL.setV(-1)
-    HAL.setW(0)
-    return "hit"
-  time.sleep(0.5)
+  bumper_state=HAL.getBumperData().state
+  if bumper_state == 1:
+    bumper_value=HAL.getBumperData().bumper
+    #print(bumper_value)
+    if bumper_value == 0:
+      print("izq")
+      HAL.setW(1)
+      HAL.setV(0)
+      return "hit"
+    if bumper_value == 1:
+      print("centro")
+      HAL.setV(-1)
+      HAL.setW(0)
+      return "hit"
+    if bumper_value == 2:
+      print("dcha")
+      HAL.setV(-1)
+      HAL.setW(0)
+      return "hit"
+  #else:
+  #  return "no_hit"
   
 
 def spiral(radius):
-  bumper_value=HAL.getBumperData().state
+  #bumper_value=HAL.getBumperData().state
   #print(bumper_value)
-  if bumper_value == 1:
-    print("ouch")
-    return "turn"
+  #if bumper_value == 1:
+  var=bumper_hit()
+  if var=="hit":
+    HAL.setV(0)
+    HAL.setW(0)
+    #print("ouch")
+    return "back"
   print("Spiral time yo!")
   time.sleep(1)
   #time.sleep(1)
@@ -65,11 +72,15 @@ def forward():
   print("straight and forward as it should be!")
   HAL.setV(1)
   HAL.setW(0)
-  bumper_value=HAL.getBumperData().state
+  #bumper_value=HAL.getBumperData().state
   #print(bumper_value)
-  if bumper_value == 1:
-    print("entra bumper1")
-    return "spiral"
+  #if bumper_value == 1:
+  var=bumper_hit()
+  if var=="hit":
+    HAL.setV(0)
+    HAL.setW(0)
+    #print("entra bumper1")
+    return "back"
   else:
     time.sleep(7)
     return "spiral"
@@ -95,3 +106,6 @@ while True:
         #reset velocity
         radius=0.5
         state=SPIRAL
+      elif forward() == "back":
+        state=BACKWARDS
+    
