@@ -115,6 +115,17 @@ while True:
     
 
 ```
+![Screenshot from 2023-09-24 20-06-14](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/0a82fc8b-8b5b-4c18-9751-6a0ac9416071)
+
+
+![Captura de pantalla 2023-09-25 200056](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/943d7b2b-8798-43d1-b148-497dc2fe392e)
+
+
+
+![Captura desde 2023-09-25 10-20-50](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/fa5180a3-23d3-4adc-80ef-04dba53ee7af)
+
+
+![Captura desde 2023-09-26 09-53-29](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/bf2918cd-039d-4276-83d8-8c63ea580ddb)
 
 Descreipción 4 versiones
 
