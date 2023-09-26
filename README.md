@@ -161,40 +161,27 @@ FORWARD=4
 state= SPIRAL
 radius=0.01
 
-def chrono(start,finish,time_reachable):
-  duration=finish-start
-  if duration >= time_reachable:
-    return 1
-  else:
-    return 0
-
 def bumper_hit():
   bumper_state=HAL.getBumperData().state
   if bumper_state == 1:
     return "hit"
 
 def spiral(radius):
-  print("spiral")
   #if the robot hitted a wall, then stop and turn back
   if bumper_hit()=="hit":
     HAL.setV(0)
     HAL.setW(0)
-    #print("ouch")
     return "back"
-  #time.sleep(1)
   HAL.setV(radius)
   HAL.setW(1)
   
 def backwards():
-  print("Im Michael Jackson dude!")
   HAL.setV(-1)
   time_end=time.time()
   if time_end- time_var >= 0.5:
     return "turn"
   else:
     return "backwards"
-  #time.sleep(0.5)
-  #return "turn"
   
 def turn():
   print("turn up the music!")
@@ -202,7 +189,6 @@ def turn():
   HAL.setW(2)
   #random numbre between 0 and 1
   time_spin= random.uniform(0.8,1.5)
-  #time.sleep(time_spin)
   time_end=time.time()
   if time_end- time_var >= time_spin:
     return "forward"
@@ -224,7 +210,6 @@ def forward():
   
 while True:
     #SPIRAL STATE
-    print("estado: "+str(state))
     if state == SPIRAL:
       if spiral(radius) == "back":
         state=BACKWARDS
@@ -257,7 +242,7 @@ while True:
         state=SPIRAL
     
 ```
-
+Here, we measure the time just before entering into a function so that then when we enter and measure it again, we can take that amount of time that passed between one and another time.time() and use it for several things.
 
 ![Captura de pantalla 2023-09-25 200056](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/943d7b2b-8798-43d1-b148-497dc2fe392e)
 
