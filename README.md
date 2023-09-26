@@ -132,11 +132,13 @@ if state == FORWARD:
       elif forward() == "back":
         state=BACKWARDS
 ```
-Here, it is clear that the state we are in is the "FORWARD" state, and whenever som
+Here, it is clear that the state we are in is the "FORWARD" state, and while iterating in that state, if the function returns "spiral", the state changes to SPIRAL and so does it to BACKWARDS when returnning "back".
+
+When the code is running and we take an example map, after a few minutes, we obtain this percentage of the whole house floor covered:
 
 ![Screenshot from 2023-09-24 20-06-14](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/0a82fc8b-8b5b-4c18-9751-6a0ac9416071)
 
-
+- On our second step we needed to get rid of the  "time.sleep()" function calls, due to the fact that can cause several problems in our code, as it is a non-stopping loop operating without stopping. That is why the only thing could use is "time.time()" to get to know the actual time and be able to compare it with others  
 ![Captura de pantalla 2023-09-25 200056](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/943d7b2b-8798-43d1-b148-497dc2fe392e)
 
 
