@@ -217,7 +217,7 @@ while True:
         time_var=time.time()
       #if the vel. is too high, reset and go forward
       if radius >= 2.5:
-        state=4
+        state=FORWARD
       #wider spiral while iterating
       radius=radius+0.01
     #BACKWARDS STATE
