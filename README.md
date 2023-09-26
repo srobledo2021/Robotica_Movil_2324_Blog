@@ -142,6 +142,7 @@ When the code is running and we take an example map, after a few minutes, we obt
 
 ![Screenshot from 2023-09-24 20-06-14](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/0a82fc8b-8b5b-4c18-9751-6a0ac9416071)
 
+----------------------------------------------------------------------------------------------------------------
 - On our second step we needed to get rid of the  "time.sleep()" function calls, due to the fact that can cause several problems in our code, as it is a non-stopping loop operating without stopping. That is why the only thing could use is "time.time()" to get to know the actual time and be able to compare it with the same function call but at any other time.
 
 We could change the spiral by deleting the time.sleep(), but this time we needed to calculate again the spiral with brand-new measurements.
@@ -153,16 +154,17 @@ from HAL import HAL
 import time
 import random
 
-time_var=time.time()
 #States:
 SPIRAL=1
 BACKWARDS=2
 TURN=3
 FORWARD=4
+
 #initial state
 state= SPIRAL
 radius=0.01
 
+#check if the vacuum cleaner bumped
 def bumper_hit():
   bumper_state=HAL.getBumperData().state
   if bumper_state == 1:
@@ -189,7 +191,7 @@ def turn():
   print("turn up the music!")
   HAL.setV(0)
   HAL.setW(2)
-  #random numbre between 0 and 1
+  #random numbre between 0.8 and 1.5
   time_spin= random.uniform(0.8,1.5)
   time_end=time.time()
   if time_end- time_var >= time_spin:
@@ -215,39 +217,61 @@ while True:
     if state == SPIRAL:
       if spiral(radius) == "back":
         state=BACKWARDS
-        #update global time variable
+        #update time variable
         time_var=time.time()
       #if the vel. is too high, reset and go forward
       if radius >= 2.5:
         state=FORWARD
       #wider spiral while iterating
       radius=radius+0.01
+      
     #BACKWARDS STATE
     if state == BACKWARDS:
       if backwards() == "turn":
         state=TURN
-        #update global time variable
+        #update time variable
         time_var=time.time()
+        
     #TURN STATE
     if state == TURN:
       if turn() == "forward":
         state=FORWARD
+
     #FORWARD STATE
     if state == FORWARD:
       if forward() == "back":
         state=BACKWARDS
-        #update global time variable
+        #update time variable
         time_var=time.time()
       #random spiral event
       if forward() == "spiral":
         radius=0.1
         state=SPIRAL
     
+    
 ```
-Here, we measure the time just before entering into a function so that then when we enter and measure it again, we can take that amount of time that passed between one and another time.time() and use it for several things.
+Here, we measure the time just before entering into a function so that then when we enter and measure it again, we can take that amount of time that passed between one and another time.time() and use it for several things. Example:
 
-![Captura de pantalla 2023-09-25 200056](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/943d7b2b-8798-43d1-b148-497dc2fe392e)
+We are going forward and suddenly bump into a wall, our function returns "back" and we change our state so that next time iterating, the new state will be "BACKWARDS". Just before that, we measure the time in the variable "time_var".
+```python
+#FORWARD STATE
+    if state == FORWARD:
+      if forward() == "back":
+        state=BACKWARDS
+        #update time variable
+        time_var=time.time()
+```
+Then we access the function 
+```python
+def backwards():
+  HAL.setV(-1)
+  time_end=time.time()
+  if time_end- time_var >= 0.5:
+    return "turn"
+  else:
+    return "backwards"
+```
 
-
+Here is a little test of the vacuum cleaner performing the last code during several minutes:
 ![Captura desde 2023-09-26 09-53-29](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/bf2918cd-039d-4276-83d8-8c63ea580ddb)
 
