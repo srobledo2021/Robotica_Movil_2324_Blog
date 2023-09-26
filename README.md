@@ -9,6 +9,8 @@ Our first practise consists on designing a vacuum cleaner. We will make a FSM(Fi
 
 This is our FSM:
 
+![gg](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/dfd4db8c-0bae-4da3-8a47-569c797e4ab2)
+
 
 (Made with: [draw.io](https://app.diagrams.net/) )
 
