@@ -138,7 +138,9 @@ When the code is running and we take an example map, after a few minutes, we obt
 
 ![Screenshot from 2023-09-24 20-06-14](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/0a82fc8b-8b5b-4c18-9751-6a0ac9416071)
 
-- On our second step we needed to get rid of the  "time.sleep()" function calls, due to the fact that can cause several problems in our code, as it is a non-stopping loop operating without stopping. That is why the only thing could use is "time.time()" to get to know the actual time and be able to compare it with others
+- On our second step we needed to get rid of the  "time.sleep()" function calls, due to the fact that can cause several problems in our code, as it is a non-stopping loop operating without stopping. That is why the only thing could use is "time.time()" to get to know the actual time and be able to compare it with the same function call but at any other time.
+
+We could change the spiral by deleting the time.sleep(), but this time we needed to calculate again the spiral with brand-new measurements.
 
 
 ![Captura de pantalla 2023-09-25 200056](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/943d7b2b-8798-43d1-b148-497dc2fe392e)
