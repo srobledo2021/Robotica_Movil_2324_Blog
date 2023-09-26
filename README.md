@@ -275,6 +275,7 @@ def backwards():
 By comparing those 2 variables, we can predict the time that passed between them and then operate like in this case, where we want to wait for half a second.
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 Here is a little test of the vacuum cleaner performing the last code during several minutes:
 ![Captura desde 2023-09-26 09-53-29](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/bf2918cd-039d-4276-83d8-8c63ea580ddb)
 
