@@ -123,12 +123,16 @@ TURN=3
 FORWARD=4
 ```
 In this way, we will be able to call any state by its name instead of the number that represents it. For instance, we can see the way it is implemented in this snippet:
-```python
-if state == BACKWARDS:
-      if backwards() == "turn":
-        state=TURN
-```
 
+```python
+if state == FORWARD:
+      if forward() == "spiral":
+        radius=0.5
+        state=SPIRAL
+      elif forward() == "back":
+        state=BACKWARDS
+```
+Here, it is clear that the state we are in is the "FORWARD" state, and whenever som
 
 ![Screenshot from 2023-09-24 20-06-14](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/0a82fc8b-8b5b-4c18-9751-6a0ac9416071)
 
