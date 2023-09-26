@@ -2,62 +2,44 @@ from GUI import GUI
 from HAL import HAL
 import time
 import random
-# Enter sequential code!
 
+time_var=time.time()
+#States:
 SPIRAL=1
 BACKWARDS=2
 TURN=3
 FORWARD=4
-
-state= 1
-radius=0.3
+#initial state
+state= SPIRAL
+radius=0.01
 
 def bumper_hit():
   bumper_state=HAL.getBumperData().state
   if bumper_state == 1:
-    bumper_value=HAL.getBumperData().bumper
-    #print(bumper_value)
-    if bumper_value == 0:
-      print("izq")
-      HAL.setW(1)
-      HAL.setV(0)
-      return "hit"
-    if bumper_value == 1:
-      print("centro")
-      HAL.setV(-1)
-      HAL.setW(0)
-      return "hit"
-    if bumper_value == 2:
-      print("dcha")
-      HAL.setV(-1)
-      HAL.setW(0)
-      return "hit"
-  #else:
-  #  return "no_hit"
-  
+    return "hit"
 
 def spiral(radius):
-  #bumper_value=HAL.getBumperData().state
-  #print(bumper_value)
-  #if bumper_value == 1:
-  var=bumper_hit()
-  if var=="hit":
+  print("spiral")
+  #if the robot hitted a wall, then stop and turn back
+  if bumper_hit()=="hit":
     HAL.setV(0)
     HAL.setW(0)
     #print("ouch")
     return "back"
-  print("Spiral time yo!")
-  time.sleep(1)
   #time.sleep(1)
   HAL.setV(radius)
-  HAL.setW(1.5)
-  time.sleep(1)
+  HAL.setW(1)
   
 def backwards():
   print("Im Michael Jackson dude!")
   HAL.setV(-1)
-  time.sleep(0.5)
-  return "turn"
+  time_end=time.time()
+  if time_end- time_var >= 0.5:
+    return "turn"
+  else:
+    return "backwards"
+  #time.sleep(0.5)
+  #return "turn"
   
 def turn():
   print("turn up the music!")
@@ -65,47 +47,55 @@ def turn():
   HAL.setW(2)
   #random numbre between 0 and 1
   time_spin= random.uniform(0.8,1.5)
-  time.sleep(time_spin)
-  return "forward"
+  #time.sleep(time_spin)
+  time_end=time.time()
+  if time_end- time_var >= time_spin:
+    return "forward"
+  else:
+    return "turn"
   
 def forward():
   print("straight and forward as it should be!")
   HAL.setV(1)
   HAL.setW(0)
-  #bumper_value=HAL.getBumperData().state
-  #print(bumper_value)
-  #if bumper_value == 1:
-  var=bumper_hit()
-  if var=="hit":
+  if bumper_hit()=="hit":
     HAL.setV(0)
     HAL.setW(0)
-    #print("entra bumper1")
     return "back"
-  else:
-    time.sleep(7)
+  #at a random moment, do a spiral
+  random_num=random.randint(1,300)
+  if random_num== 5:
     return "spiral"
   
 while True:
-    print(state)
+    #SPIRAL STATE
     if state == SPIRAL:
-      radius=radius+0.1
-      if spiral(radius) == "turn":
-        state=TURN
-        #if the vel. is too high, reset and go forward
-      if radius >= 1.4:
+      if spiral(radius) == "back":
+        state=BACKWARDS
+        #update global time variable
+        time_var=time.time()
+      #if the vel. is too high, reset and go forward
+      if radius >= 2.5:
         state=4
-      
+      #wider spiral while iterating
+      radius=radius+0.01
+    #BACKWARDS STATE
     if state == BACKWARDS:
       if backwards() == "turn":
         state=TURN
+        #update global time variable
+        time_var=time.time()
+    #TURN STATE
     if state == TURN:
       if turn() == "forward":
         state=FORWARD
+    #FORWARD STATE
     if state == FORWARD:
-      if forward() == "spiral":
-        #reset velocity
-        radius=0.5
-        state=SPIRAL
-      elif forward() == "back":
+      if forward() == "back":
         state=BACKWARDS
-    
+        #update global time variable
+        time_var=time.time()
+      #random spiral event
+      if forward() == "spiral":
+        radius=0.1
+        state=SPIRAL
