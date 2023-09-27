@@ -2,6 +2,7 @@
 # Index
 - [Exercise 1: Vacuum Cleaner](#Vacuum-cleaner)
   - [Introduction](#Introduction)
+  - [API](#API)
   - [Steps](#Steps)
   - [Final Code](#Final-code)
 
@@ -17,6 +18,13 @@ This is our FSM:
 
 
 (Made with: [draw.io](https://app.diagrams.net/) )
+### API
+- from HAL import HAL - to import the HAL(Hardware Abstraction Layer) library class. This class contains the functions that sends and receives information to and from the Hardware(Gazebo).
+- from GUI import GUI - to import the GUI(Graphical User Interface) library class. This class contains the functions used to view the debugging information, like image widgets.
+- HAL.getBumperData().state - To establish if the robot has crashed or not. Returns a 1 if the robot collides and a 0 if it has not crashed.
+- HAL.getBumperData().bumper - If the robot has crashed, it turns to 1 when the crash occurs at the center of the robot, 0 when it occurs at its left and 2 if the collision is at its right.
+- HAL.setV() - to set the linear speed
+- HAL.setW() - to set the angular velocity
 
 ### Steps
 
