@@ -476,3 +476,7 @@ Here is a little test of the vacuum cleaner after a couple of minutes performing
 
 ![Captura desde 2023-09-26 09-53-29](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/bf2918cd-039d-4276-83d8-8c63ea580ddb)
 
+Another test in a x2.00 vel:
+
+
+https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/f789a1ca-2fea-4c6b-b480-fd62ae38afaa
