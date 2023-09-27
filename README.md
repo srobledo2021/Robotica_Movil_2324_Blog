@@ -279,7 +279,7 @@ def backwards():
 By comparing those 2 variables, we can predict the time that passed between them and then operate like in this case, where we want to wait for half a second.
 
 
--When running the code several times, we realize that even though the vacuum cleaner covers almost the whole map for not so long, it passes through some places over and over. That is why the function bumper_hit() has been expanded so that when the bumper of the robot crashes, the performance is quite different. When it crashes on the left side, the robot stops, gets back and turns right. Same thing for the right side but to the right.
+- When running the code several times, we realize that even though the vacuum cleaner covers almost the whole map for not so long, it passes through some places over and over. That is why the function bumper_hit() has been expanded so that when the bumper of the robot crashes, the performance is quite different. When it crashes on the left side, the robot stops, gets back and turns right. Same thing for the right side but to the right.
 
 We add global variables for the left and right:
 ```python
@@ -303,7 +303,7 @@ def bumper_hit():
       dcha=dcha+1
     return "hit"
 ```
-So that then we can make the vacuum cleaner act different depending on those variables. After that, we need to reinitialize them to iterate again:
+So that then we can make the vacuum cleaner act different in the 'turn' function() depending on those variables. After that, we need to reinitialize them to iterate again:
 ```python
 def turn(left,right):
   #turn right if bumped on left
@@ -330,6 +330,8 @@ def turn(left,right):
   else:
     return "turn"
 ```
+
+- Overall, here is the final code:
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 ### Final code
 
@@ -424,7 +426,6 @@ def forward():
   if bumper_hit()=="hit":
     HAL.setW(0)
     HAL.setV(0)
-    #print("ouch")
     return "back"
   #at a random moment, do a spiral
   random_num=random.randint(1,300)
