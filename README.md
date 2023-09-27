@@ -147,7 +147,7 @@ When the code is running and we take an example map, after a few minutes, we obt
 
 ----------------------------------------------------------------------------------------------------------------
 
-- On our second step we needed to get rid of the  "time.sleep()" function calls, due to the fact that can cause several problems in our code, as it is a non-stopping loop operating without stopping. That is why the only thing could use is "time.time()" to get to know the actual time and be able to compare it with the same function call but at any other time.
+- On our second step we needed to get rid of the  "time.sleep()" function calls, due to the fact that can cause several problems to our code. As it is a non-stopping loop, when time.sleep() is done, we loose the whole control of the system and no matter what happens to our robot, that we cannot respond. That is why the only thing could use is "time.time()" to get to know the actual time and be able to compare it with the same function call but at any other time.
 
 We could change the spiral by deleting the time.sleep(), but this time we needed to calculate again the spiral with brand-new measurements.
 
@@ -276,6 +276,9 @@ def backwards():
     return "backwards"
 ```
 By comparing those 2 variables, we can predict the time that passed between them and then operate like in this case, where we want to wait for half a second.
+
+
+-When running the code several times, we realize that even though the vacuum cleaner covers almost the whole map for not so long, it passes throgh some places over and over. Thats why the function bumper_hit() has been expanded so that when the bumper of the robot crashes, the performance is quite different. When it crashes on the left side, the robot stops, gets back and turns right. Same thing for the right side but to the right.
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
