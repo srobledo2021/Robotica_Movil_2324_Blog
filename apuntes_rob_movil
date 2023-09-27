@@ -1,0 +1,8 @@
+frecuiencia alta-> tesla
+
+diferencia entre programar de forma normal y reactiva. de forma normal, se estima ago y se envía la orden de forma directa, pero
+esto tiene 3 problemas:
+    -actuadores no son perfectos por lo que la aplicacion software falla.
+    -mientras haces algo, no puedes reaccionar a otros problemas y pierdes el control del robot
+
+pan es el movimiento de giro sobre X de un robot, suponiendo X como cabezeo(yaw)
