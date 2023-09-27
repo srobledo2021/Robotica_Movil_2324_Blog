@@ -41,7 +41,6 @@ def spiral(radius):
   if bumper_hit()=="hit":
     HAL.setW(0)
     HAL.setV(0)
-    #print("ouch")
     return "back"
 
 #go back for half a second
@@ -88,7 +87,6 @@ def forward():
   if bumper_hit()=="hit":
     HAL.setW(0)
     HAL.setV(0)
-    #print("ouch")
     return "back"
   #at a random moment, do a spiral
   random_num=random.randint(1,300)
