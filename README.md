@@ -6,7 +6,7 @@
 
 ----------------------------------------------------------------------------------
 # Vacuum cleaner
------------------------------------------------------------------------------------
+
 ### Introduction
 Our first practise consists on designing a vacuum cleaner. We will make a FSM(Finite State Machine) to split the code into different states.
 
@@ -17,7 +17,7 @@ This is our FSM:
 
 (Made with: [draw.io](https://app.diagrams.net/) )
 
-# Steps
+### Steps
 
 First of all we have solved the problem with those four states using a while loop, so that the code works at a certain frecuency. Every time the while loop iterates, it evaluates whether the state of the code is forward, backward, spiral or turn, and then effectuates as so. Those states are constantly changing and can interact with each other in order to achieve the behavior we want for our vacuum cleaner.
 
