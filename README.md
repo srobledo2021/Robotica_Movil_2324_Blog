@@ -1,10 +1,17 @@
-# Robótica Móvil 
+
 
 ## Sergio Robledo Sarrión
 #
-#
-#
-# Introduction
+-----------------------------------------------------------------------------------
+## Index
+- [Exercise 1](Vacuum-cleaner)
+  - [Introduction](#Introduction)
+  - [Steps](#Steps)
+
+----------------------------------------------------------------------------------
+# Vacuum cleaner
+-----------------------------------------------------------------------------------
+## Introduction
 Our first practise consists on designing a vacuum cleaner. We will make a FSM(Finite State Machine) to split the code into different states.
 
 This is our FSM:
