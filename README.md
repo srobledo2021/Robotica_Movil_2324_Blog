@@ -1,9 +1,5 @@
 
-
-## Sergio Robledo Sarrión
-#
------------------------------------------------------------------------------------
-## Index
+# Index
 - [Exercise 1: Vacuum Cleaner](#Vacuum-cleaner)
   - [Introduction](#Introduction)
   - [Steps](#Steps)
@@ -11,7 +7,7 @@
 ----------------------------------------------------------------------------------
 # Vacuum cleaner
 -----------------------------------------------------------------------------------
-## Introduction
+### Introduction
 Our first practise consists on designing a vacuum cleaner. We will make a FSM(Finite State Machine) to split the code into different states.
 
 This is our FSM:
