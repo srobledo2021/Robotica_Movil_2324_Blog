@@ -4,7 +4,7 @@
 #
 -----------------------------------------------------------------------------------
 ## Index
-- [Exercise 1](Vacuum-cleaner)
+- [Exercise 1: Vacuum Cleaner](#Vacuum-cleaner)
   - [Introduction](#Introduction)
   - [Steps](#Steps)
 
