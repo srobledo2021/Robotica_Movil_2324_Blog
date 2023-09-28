@@ -533,6 +533,6 @@ Here is a little test of the vacuum cleaner after a couple of minutes performing
 ![Sin título](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/37cd7758-ae61-4e82-aa57-8f829c464b0e)
 
 Here is a video showing the behavior:
-![Video](/source/Test1.mp4)
+![Video](./source/Test1.mp4)
 
 https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/f789a1ca-2fea-4c6b-b480-fd62ae38afaa
