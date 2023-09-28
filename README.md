@@ -25,6 +25,7 @@ This is our FSM:
 - HAL.getBumperData().bumper - If the robot has crashed, it turns to 1 when the crash occurs at the center of the robot, 0 when it occurs at its left and 2 if the collision is at its right.
 - HAL.setV() - to set the linear speed
 - HAL.setW() - to set the angular velocity
+- HAL.getLaserData() - It allows to obtain the data of the laser sensor, which consists of 180 pairs of values ​​(0-180º, distance in millimeters).
 
 ### Steps
 
@@ -292,8 +293,8 @@ By comparing those 2 variables, we can predict the time that passed between them
 We add global variables for the left and right:
 ```python
 #global variables for bumper
-izq = 0
-dcha = 0
+left = 0
+right = 0
 ```
 In the bumper_hit() function, we update them when necessary
 ```python
@@ -304,34 +305,34 @@ def bumper_hit():
   if bumper_state == 1:
     bumper_location=HAL.getBumperData().bumper
     if bumper_location==0:
-      global izq
-      izq=izq+1
+      global left
+      left=left+1
     if bumper_location==2:
-      global dcha
-      dcha=dcha+1
+      global right
+      right=right+1
     return "hit"
 ```
 So that then we can make the vacuum cleaner act different in the 'turn' function() depending on those variables. After that, we need to reinitialize them to iterate again:
 ```python
-def turn(left,right):
+def turn(left_,right_):
   #turn right if bumped on left
-  if left == 1:
+  if left_ == 1:
     HAL.setW(2)
   #turn left if bumped on right
-  if right == 1:
+  if right_ == 1:
     HAL.setW(-2)
   #if got hit in the centre, make a random turn
-  if (right == 0) and (left == 0):
+  if (right_ == 0) and (left_ == 0):
       HAL.setW(2)
   HAL.setV(0)
   #random number
   time_spin= random.uniform(0.8,1.5)
   time_end=time.time()
   #reset global variables
-  global izq
-  global dcha
-  izq=0
-  dcha=0
+  global left
+  global right
+  left=0
+  right=0
   if time_end- time_var >= time_spin:
     #reset of bumper
     return "forward"
@@ -514,7 +515,7 @@ while True:
         time_var=time.time()
     #TURN STATE
     if state == TURN:
-      if turn(izq,dcha) == "forward":
+      if turn(left,right) == "forward":
         state=FORWARD
     #FORWARD STATE
     if state == FORWARD:
