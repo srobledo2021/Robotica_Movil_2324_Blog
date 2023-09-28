@@ -338,7 +338,7 @@ def turn(left,right):
   else:
     return "turn"
 ```
--In the end, as the practise characteristics have been modified throughout the days, there has been made a major change related to laser. Reading the API of the robot, there is an example of the laser performance, which is this one:
+- In the end, as the practise characteristics have been modified throughout the days, there has been made a major change related to laser. Reading the API of the robot, there is an example of the laser performance, which is this one:
 ```python
 #introduce laser data in an array
 def parse_laser_data(laser_data):
