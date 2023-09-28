@@ -530,7 +530,8 @@ while True:
 ```
 Here is a little test of the vacuum cleaner after a couple of minutes performing the last code:
 
-![Captura desde 2023-09-26 09-53-29](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/bf2918cd-039d-4276-83d8-8c63ea580ddb)
+![Sin título](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/f5e2dd7f-461a-4ea5-9e83-82e1697f3c5b)
+
 
 Another test in a x2.00 vel:
 
