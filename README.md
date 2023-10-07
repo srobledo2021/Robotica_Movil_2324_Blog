@@ -592,3 +592,18 @@ The main purpose of this code is to segment an image based on a color range in t
 mask =cv2.inRange(hsv, lower_tresh,upper_tresh)
 ```
  a mask is created that identifies the pixels in the original image that fall within the color range defined by lower_thresh and upper_thresh. The resulting mask will be a binary image in black and white, where pixels falling within the color range will be white (255), and those outside the range will be black (0).
+
+After that we wanted an indicator so that we can know whether the car is following the line or not and how is it going to do that. That is why, we added this part of the program:
+```
+ M = cv2.moments(mask)
+
+    if M['m00'] > 0:
+      #centroids of X and Y
+      cx = int(M['m10'] / M['m00'])
+      cy = int(M['m01'] / M['m00'])
+      cv2.circle(image, (cx, cy), 20, (0, 0, 255), -1)
+```
+The 'moments' function from OpenCV is used to calculate the moments of the binary image (the mask we added). Moments are statistical descriptors used to characterize a distribution of pixels in an image. In this case, the moments of the mask 'mask' are being calculated.
+
+For 'cx' and 'cy', which are the coordinates of the center of mass (centroid) of the object in the binary image. The moments m['m10'] and m['m01'] represent the sums of the X and Y coordinates of all pixels in the object, respectively, and m['m00'] represents the area of the object. Dividing these sums by the area of the object gives the centroid coordinates (cx, cy) as integers.
+After that, we 'paint' the circle in  the centroid of the line, that we calculated before.
