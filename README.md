@@ -6,8 +6,8 @@
   - [Steps](#Steps)
   - [Final Code](#Final-code)
 - [Exercise 2: F1 Follow Line](#Follow-Line)
-  - [Introduction](#Introduction)
-  - [API](#API)
+  - [Introduction](#Introduction-2)
+  - [API](#API-2)
 
 ----------------------------------------------------------------------------------
 # Vacuum cleaner
@@ -547,10 +547,10 @@ https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/f789a1
 # Follow Line
 
 
-### Introduction
+### Introduction 2
 The goal of this exercise is to perform a PID reactive control capable of following the line painted on the racing circuit.
 
-### API
+### API 2
 
 from HAL import HAL - to import the HAL(Hardware Abstraction Layer) library class. This class contains the functions that sends and receives information to and from the Hardware(Gazebo).
 from GUI import GUI - to import the GUI(Graphical User Interface) library class. This class contains the functions used to view the debugging information, like image widgets.
