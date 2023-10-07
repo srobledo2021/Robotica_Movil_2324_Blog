@@ -606,7 +606,7 @@ After that we wanted an indicator so that we can know whether the car is followi
 The 'moments' function from OpenCV is used to calculate the moments of the binary image (the mask we added). Moments are statistical descriptors used to characterize a distribution of pixels in an image. In this case, the moments of the mask 'mask' are being calculated.
 
 For 'cx' and 'cy', which are the coordinates of the center of mass (centroid) of the object in the binary image. The moments m['m10'] and m['m01'] represent the sums of the X and Y coordinates of all pixels in the object, respectively, and m['m00'] represents the area of the object. Dividing these sums by the area of the object gives the centroid coordinates (cx, cy) as integers.
-After that, we 'paint' the circle in  the centroid of the line, that we calculated before.
+After that, we 'paint' the circle in  the centroid of the line, that we calculated before. Here is how the final image can be seen on screen:
 
 ![image](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/6f6c2a14-af81-440c-9e27-9fac2cda7c54)
 
@@ -626,3 +626,12 @@ We included another update for the image, so that in this way, it is clearer and
 
 ```
 We will use the cv2.dilate() and cv2.erode() functions to process the image. In this way, we can let the F1 know more about farther road. As a result, the F1 can handle sharp turns better.
+
+----------------------------------------------------------------------------
+
+Now it is time to use the PID to control the F1.
+In this situation, and having the: 'HAL.setW(X)' function, we can directly set the angular velocity of the F1. The general equation of the PID is the following:
+
+![Positional_PID](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/b7830c7c-5733-4096-9a91-919ee7ef66ae)
+
+We need to implement this in our code, watching carefully the error every time it iterates and adjusting the constants Kp,Kd and Ki to minimize the error and oscilate less. 
