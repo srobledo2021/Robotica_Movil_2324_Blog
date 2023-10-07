@@ -8,6 +8,7 @@
 - [Exercise 2: F1 Follow Line](#Follow-Line)
   - [Introduction](#Introduction-2)
   - [API](#API-2)
+  - [Steps](#Steps-2)
 
 ----------------------------------------------------------------------------------
 # Vacuum cleaner
@@ -552,9 +553,42 @@ The goal of this exercise is to perform a PID reactive control capable of follow
 
 ### API 2
 
-from HAL import HAL - to import the HAL(Hardware Abstraction Layer) library class. This class contains the functions that sends and receives information to and from the Hardware(Gazebo).
-from GUI import GUI - to import the GUI(Graphical User Interface) library class. This class contains the functions used to view the debugging information, like image widgets.
-HAL.getImage() - to get the image
-HAL.setV() - to set the linear speed
-HAL.setW() - to set the angular velocity
-GUI.showImage() - allows you to view a debug image or with relevant information
+- from HAL import HAL - to import the HAL(Hardware Abstraction Layer) library class. This class contains the functions that sends and receives information to and from the Hardware(Gazebo).
+- from GUI import GUI - to import the GUI(Graphical User Interface) library class. This class contains the functions used to view the debugging information, like image widgets.
+- HAL.getImage() - to get the image
+- HAL.setV() - to set the linear speed
+- HAL.setW() - to set the angular velocity
+- GUI.showImage() - allows you to view a debug image or with relevant information
+
+### Steps 2
+
+First of all, we need to implement OpenCV and Python Color Detection, so that we can constantly get the POV of the car. After that we need to apply a mask to the image to get the red color of the line needed to be followed. Our first code implementation was this one:
+
+```python
+from GUI import GUI
+from HAL import HAL
+import numpy as np
+import cv2
+
+while True:
+    #get raw image
+    image=HAL.getImage()
+    hsv=cv2.cvtColor(image,cv2.COLOR_BGR2HSV)
+    #define color thresholds
+    lower_tresh = np.array([0,100,100])
+    upper_tresh =np.array([10,255,255])
+    #a mask is created which identifies pixels in this color range
+    mask =cv2.inRange(hsv, lower_tresh,upper_tresh)
+    cv2.imshow("mask",mask)
+   
+```
+The main purpose of this code is to segment an image based on a color range in the HSV (Hue, Saturation, Value) color space.
+'lower_tresh and upper_tresh are a NumPy array that define the lower limit of the color range you want to detect. In this case, it's looking for red. But we can detect any colour we want with this method.
+
+![image](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/3ae4cd3d-a443-41b0-b4b4-a207d187d3f2)
+
+ In this line:
+```
+mask =cv2.inRange(hsv, lower_tresh,upper_tresh)
+```
+ a mask is created that identifies the pixels in the original image that fall within the color range defined by lower_thresh and upper_thresh. The resulting mask will be a binary image in black and white, where pixels falling within the color range will be white (255), and those outside the range will be black (0).
