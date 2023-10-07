@@ -630,7 +630,8 @@ We will use the cv2.dilate() and cv2.erode() functions to process the image. In 
 ----------------------------------------------------------------------------
 
 Now it is time to use the PID to control the F1.
-In this situation, and having the: 'HAL.setW(X)' function, we can directly set the angular velocity of the F1. The general equation of the PID is the following:
+In this situation, we have the: 'HAL.setW(X)' function, so that we can directly set the angular velocity of the F1 and keep adjusting it at every iteration. 
+The general equation of the PID is the following:
 
 ![Positional_PID](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/b7830c7c-5733-4096-9a91-919ee7ef66ae)
 
