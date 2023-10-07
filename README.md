@@ -588,13 +588,13 @@ The main purpose of this code is to segment an image based on a color range in t
 ![image](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/3ae4cd3d-a443-41b0-b4b4-a207d187d3f2)
 
  In this line:
-```
+```python3
 mask =cv2.inRange(hsv, lower_tresh,upper_tresh)
 ```
  a mask is created that identifies the pixels in the original image that fall within the color range defined by lower_thresh and upper_thresh. The resulting mask will be a binary image in black and white, where pixels falling within the color range will be white (255), and those outside the range will be black (0).
 
 After that we wanted an indicator so that we can know whether the car is following the line or not and how is it going to do that. That is why, we added this part of the program:
-```
+```python3
  M = cv2.moments(mask)
 
     if M['m00'] > 0:
@@ -607,3 +607,22 @@ The 'moments' function from OpenCV is used to calculate the moments of the binar
 
 For 'cx' and 'cy', which are the coordinates of the center of mass (centroid) of the object in the binary image. The moments m['m10'] and m['m01'] represent the sums of the X and Y coordinates of all pixels in the object, respectively, and m['m00'] represents the area of the object. Dividing these sums by the area of the object gives the centroid coordinates (cx, cy) as integers.
 After that, we 'paint' the circle in  the centroid of the line, that we calculated before.
+
+![image](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/6f6c2a14-af81-440c-9e27-9fac2cda7c54)
+
+-------------------------------------------------------------------------
+
+We included another update for the image, so that in this way, it is clearer and much harder for the program to mistake.
+```python3
+    #process the image and reduce noise and small pixel variations.
+    hsv = cv.cvtColor(img, cv.COLOR_BGR2HSV)
+    blur = cv.GaussianBlur(hsv, (5,5), 0)
+
+    # detect the color of line
+    res = cv.inRange(blur, lowest_thresh, top_thresh)
+    #dilate and erode the mask
+    d = cv.dilate(res, kernel=keneral, iterations=D_iter)
+    e = cv.erode(d, kernel=keneral, iterations=E_iter)
+
+```
+We will use the cv2.dilate() and cv2.erode() functions to process the image. In this way, we can let the F1 know more about farther road. As a result, the F1 can handle sharp turns better.
