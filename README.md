@@ -5,6 +5,9 @@
   - [API](#API)
   - [Steps](#Steps)
   - [Final Code](#Final-code)
+- [Exercise 2: F1 Follow Line](#Follow-Line)
+  - [Introduction](#Introduction)
+  - [API](#API)
 
 ----------------------------------------------------------------------------------
 # Vacuum cleaner
@@ -539,3 +542,19 @@ Here is a little demo video at x2.00 speed(that can be seen online):
 
 https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/f789a1ca-2fea-4c6b-b480-fd62ae38afaa
 
+-----------------------------------------------------------------------------------------------------------------------------------
+
+# Follow Line
+
+
+### Introduction
+The goal of this exercise is to perform a PID reactive control capable of following the line painted on the racing circuit.
+
+### API
+
+from HAL import HAL - to import the HAL(Hardware Abstraction Layer) library class. This class contains the functions that sends and receives information to and from the Hardware(Gazebo).
+from GUI import GUI - to import the GUI(Graphical User Interface) library class. This class contains the functions used to view the debugging information, like image widgets.
+HAL.getImage() - to get the image
+HAL.setV() - to set the linear speed
+HAL.setW() - to set the angular velocity
+GUI.showImage() - allows you to view a debug image or with relevant information
