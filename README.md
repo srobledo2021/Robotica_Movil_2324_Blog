@@ -640,7 +640,11 @@ We need to implement this in our code, watching carefully the error every time i
 
 
 
+Before finishing implementing the code we needed to create several functions, so that it will be much easier to undesrtand and work with.
 
+- get_red_mask(img) It receives the image, applies a mask so that we only get the red colour, and then 'depurates' it and returns it. Returns the mask
+- get_centroid(mask) It calculates the centroid of the line from the mask that is introduced. Returns the centroid (cx,cy)
+- calculate_angular_velocity(error) It calculates the angular speed by applying a PID inside, which is already explained.
 
 ```python3
 from GUI import GUI
