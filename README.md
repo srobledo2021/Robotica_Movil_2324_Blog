@@ -9,6 +9,7 @@
   - [Introduction](#Introduction-2)
   - [API](#API-2)
   - [Steps](#Steps-2)
+  - [Final Code](#Final-code-2)
 
 ----------------------------------------------------------------------------------
 # Vacuum cleaner
@@ -667,6 +668,7 @@ Here, as it can be seen, the loop handles the error and deals with it by calling
   angular= P + I + D
 ```
 
+### Final code 2
 
 ```python3
 from GUI import GUI
