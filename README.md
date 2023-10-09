@@ -628,6 +628,15 @@ We included another update for the image, so that in this way, it is clearer and
 We will use the cv2.dilate() and cv2.erode() functions to process the image. In this way, we can let the F1 know more about farther road. As a result, the F1 can handle sharp turns better.
 
 ----------------------------------------------------------------------------
+ 
+Before applying the PID in our code we need to create several functions, so that it will be much easier to undesrtand and work with.
+
+- get_red_mask(img) It receives the image, applies a mask so that we only get the red colour, and then 'depurates' it and returns it. Returns the mask
+- get_centroid(mask) It calculates the centroid of the line from the mask that is introduced. Returns the centroid (cx,cy)
+- calculate_angular_velocity(error) It calculates the angular speed by applying a PID inside, which is already explained.
+
+
+------------------------------------------------------------------------------
 
 Now it is time to use the PID to control the F1.
 In this situation, we have the: 'HAL.setW(X)' function, so that we can directly set the angular velocity of the F1 and keep adjusting it at every iteration. 
@@ -637,14 +646,27 @@ The general equation of the PID is the following:
 
 We need to implement this in our code, watching carefully the error every time it iterates and adjusting the constants Kp,Kd and Ki to minimize the error and oscilate less. 
 
+We included the PID by calling our function 'calculate_angular_velocity()'. In our while loop, we did this:
+```python3
+#PID control
+    cur_error = -(centroid[0] - (width/2))/300
+    angular=calculate_angular_velocity(cur_error)
+    HAL.setW(angular)
+```
+Here, as it can be seen, the loop handles the error and deals with it by calling a function that will have the PID and will return the angular speed after the PID is implemented. We implement the PID this way:
+```pytho3
+#proportional error
+  P = Kp * error
+  D = Kd * ( error - prev_error)
+  
+  prev_error = error
+  
+  integral_e += error
+  I = Ki * integral_e
+  
+  angular= P + I + D
+```
 
-
-
-Before finishing implementing the code we needed to create several functions, so that it will be much easier to undesrtand and work with.
-
-- get_red_mask(img) It receives the image, applies a mask so that we only get the red colour, and then 'depurates' it and returns it. Returns the mask
-- get_centroid(mask) It calculates the centroid of the line from the mask that is introduced. Returns the centroid (cx,cy)
-- calculate_angular_velocity(error) It calculates the angular speed by applying a PID inside, which is already explained.
 
 ```python3
 from GUI import GUI
