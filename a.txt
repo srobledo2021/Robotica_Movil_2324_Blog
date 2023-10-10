@@ -1,0 +1,35 @@
+from GUI import GUI
+from HAL import HAL
+import numpy as np
+import cv2
+
+
+prev_error = 0 
+accum_error = 0
+while True:
+    image=HAL.getImage()
+    hsv=cv2.cvtColor(image, cv2.COLOR_BGR2HSV) 
+    lower_thresh_1=np.array([0, 0, 0])
+    upper_thresh_1=np.array([200, 200, 200])
+    lower_thresh_2 = np.array([250, 250, 250]) 
+    upper_thresh_2=np.array([300, 300, 300])
+    #console.print("Running")
+    mask1= cv2.inRange(hsv, lower_thresh_1, upper_thresh_1) 
+    mask1= cv2.bitwise_not(mask1)
+    mask2=cv2.inRange(hsv, lower_thresh_2, upper_thresh_2) 
+    mask2= cv2.bitwise_not(mask2)
+    mask = cv2.bitwise_and(mask1, mask2)
+    
+    h, w, d = image.shape 
+    GUI.showImage(image)
+    M=cv2.moments(mask) 
+    if M['m00'] > 0:
+      cx=int(M['m10']/ M['m00']) 
+      cy=int(M['m01']/['m00'])
+      cv2.circle(image, (cx, cy), 20, (0, 0, 255), -1) 
+      err = cx - w/2
+      p = float(err)
+      d = float(err) - float(prev_error)
+      HAL.setV(2)
+      HAL.setW(-p/150 -d/150) 
+      prev_error = float(err)
