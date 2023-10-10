@@ -668,6 +668,8 @@ Here, as it can be seen, the loop handles the error and deals with it by calling
   angular= P + I + D
 ```
 
+After implementing this PID  with the values: Kp=1, Ki = 0.001, Kd=2.5. We realized that although the code is working perfectly and the car stays on the line the whole time with smooth movements, we needed to do something else so that the car could go faster and complete one entire lap in less than one or two minutes. That is when we came up with an idea, a new PID controller for the linear speed so that the car itself can regulate the way it behaves, depending on the track. So that if it is following the line in a straight line, the speed will work different than when the car is turning. Assuming all of that, here is how the implementation works:
+
 ### Final code 2
 
 ```python3
