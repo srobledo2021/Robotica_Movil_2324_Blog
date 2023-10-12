@@ -1,88 +1,126 @@
 from GUI import GUI
 from HAL import HAL
-import time
-import cv2
 import numpy as np
+import cv2 as cv
 
-# Definir constantes para los controladores PID
-kp_linear = 1.1
-ki_linear = 0.01
-kd_linear = 1.3
 
-kp_angular = 1.1
-ki_angular = 0.01
-kd_angular = 1.3
+keneral = np.ones((4,4))
 
-# Variables para el control PID lineal
-prev_err_linear = 0
-accum_err_linear = 0
+#angular error handling
+prev_error = 0
+integral_e = 0
 
-# Variables para el control PID angular
-prev_err_angular = 0
-accum_err_angular = 0
+#linear error handling
+prev_error_lin=0
+integral_e_lin =0
 
-# Umbral para detectar curvas (ajusta este valor según tu circuito)
-umbral_curva = 1  # Ajusta el valor de acuerdo a tus necesidades
 
-# Función para el control PID lineal
-def control_linear(err_linear):
-    global prev_err_linear, accum_err_linear
-    p = err_linear
-    d = err_linear - prev_err_linear
-    i = accum_err_linear
-    control_signal = kp_linear * p + ki_linear * i + kd_linear * d
-    accum_err_linear += err_linear
-    prev_err_linear = err_linear
-    return control_signal
+lowest_thresh = np.array([0, 43, 46])
+top_thresh = np.array([26,255,255])
 
-# Función para el control PID angular
-def control_angular(err_angular):
-    global prev_err_angular, accum_err_angular
-    p = err_angular
-    d = err_angular - prev_err_angular
-    i = accum_err_angular
-    control_signal = kp_angular * p + ki_angular * i + kd_angular * d
-    accum_err_angular += err_angular
-    prev_err_angular = err_angular
-    return control_signal
+curve_threshold = 0.2
+
+#curves
+Kp = 1
+Ki = 0.0001
+Kd = 2.5
+
+#straight lines
+Kp_l=1
+Ki_l=0.0001
+Kd_l= 2.5
+
+
+
+
+D_iter = 5
+E_iter = 1
+
+
+def get_red_mask(img):
+  #process the image and reduce noise and small pixel variations.
+    hsv = cv.cvtColor(img, cv.COLOR_BGR2HSV)
+    blur = cv.GaussianBlur(hsv, (5,5), 0)
+
+    # detect the color of line
+    res = cv.inRange(blur, lowest_thresh, top_thresh)
+    #dilate and erode the mask
+    d = cv.dilate(res, kernel=keneral, iterations=D_iter)
+    e = cv.erode(d, kernel=keneral, iterations=E_iter)
+    
+    return e
+
+
+def get_centroid(mask):
+  # caculate the center of the line
+  m = cv.moments(mask)
+  cx = int(m['m10']/m['m00'])
+  cy = int(m['m01']/m['m00'])
+  cv.circle(img, (cx, cy), 20, (0, 0, 255), -1)
+  centroid = (cx,cy)
+  return centroid
+
+
+
+def calculate_angular_velocity(error):
+  global prev_error, integral_e
+  #proportional error
+  P = Kp * error
+  
+  D = Kd * ( error - prev_error)
+  
+  prev_error = error
+  
+  integral_e += error
+  I = Ki * integral_e
+  
+  
+  angular= P + I + D
+  return angular
+  
+  
+def calculate_linear_velocity(error):
+  global prev_error_lin, integral_e_lin
+  #proportional error
+  P = Kp_l * error
+  
+  D = Kd_l * ( error - prev_error_lin)
+  
+  prev_error_lin = error
+  
+  integral_e_lin += error
+  I = Ki_l * integral_e_lin
+  
+  
+  angular= P + I + D
+  return angular
+
 
 while True:
-    cap = HAL.getImage()
-    hsv = cv2.cvtColor(cap, cv2.COLOR_BGR2HSV)
-    lower = np.array([0, 0, 0])
-    upper = np.array([1, 1, 360])
-   
-    mask = cv2.inRange(hsv, lower, upper)
-    mask = cv2.bitwise_not(mask)
-   
-    h, w, d = cap.shape
-    top = 3 * h/4
-    bot = top + 20
-   
-    M = cv2.moments(mask)
-   
-    if M['m00'] > 0:
-        cx = int(M['m10'] / M['m00'])
-        cy = int(M['m01'] / M['m00'])
-        cv2.circle(cap, (cx, cy), 20, (0, 0, 255), -1)
-        err_linear = cx - w/2
-        err_angular = err_linear  # Para mantener el giro en función del error lineal
-        print("Err Linear:", err_linear)
-       
-        # Detectar si es una curva o una recta (criterio de detección)
-        if abs(err_linear) > umbral_curva:
-            # Control PID para curvas
-            control_signal_linear = control_linear(0)  # Mantener velocidad lineal constante en curvas
-            control_signal_angular = control_angular(err_angular)
-        else:
-            # Control PID para rectas
-            control_signal_linear = control_linear(err_linear)
-            control_signal_angular = control_angular(err_angular)
-       
-        linear_speed = 10 + control_signal_linear
-        angular_speed = -control_signal_angular / 10
-       
-        GUI.showImage(cap)
-       
-        HAL.setV(linear_speed)
-        HAL.setW(angular_speed)
+    #get image
+    img = HAL.getImage()
+    #image info
+    height, width, channel = img.shape
+    #get the mask with the red filters
+    mask=get_red_mask(img)
+    #get the centroid of the red line at every time
+    centroid=get_centroid(mask)
+    
+    #PID control
+    cur_error = -(centroid[0] - (width/2)) /300
+    linear_error = cur_error
+    
+    print("Err: ", cur_error)
+    
+    if abs(cur_error) > curve_threshold:
+      #Curve PID
+      print("Curve")
+      angular=calculate_angular_velocity(cur_error)
+      HAL.setW(angular)
+      HAL.setV(4)
+    else:
+      #straight line PID
+      print("straight")
+      linear=calculate_linear_velocity(linear_error)
+      HAL.setW(linear)
+      HAL.setV(8)
