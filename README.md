@@ -796,8 +796,6 @@ Ki_l=0.0001
 Kd_l= 2.5
 
 
-
-
 D_iter = 5
 E_iter = 1
 
@@ -894,25 +892,34 @@ while True:
     #get the centroid of the red line at every time
     centroid=get_centroid(mask)
     
+    print("centroid= ",centroid)
+    print("top_centroid= ",top_centroid)
+    
     #PID control
     cur_error = -(centroid[0] - (width/2)) /300
     linear_error = cur_error
     
+    
+    curve_threshold=abs(centroid[0]- top_centroid[0])
+    print(curve_threshold)
+    
+    if (curve_threshold < 10):
+      #straight line PID
+      print("straight")
+      linear=calculate_linear_velocity(linear_error)
+      HAL.setW(linear)
+      HAL.setV(8)
+    else:
+      print("Curve")
+      angular=calculate_angular_velocity(cur_error)
+      HAL.setW(angular)
+      HAL.setV(4)
     #print("Err: ", cur_error)
     
     #if abs(cur_error) > curve_threshold:
     #Curve PID
-    print("Curve")
-    angular=calculate_angular_velocity(cur_error)
-    HAL.setW(angular)
-    HAL.setV(4)
-   # else:
-      #straight line PID
-      #print("straight")
-      #linear=calculate_linear_velocity(linear_error)
-      #HAL.setW(linear)
-      #HAL.setW(0)
-      #HAL.setV(8)
+      
+   
       
     GUI.showImage(img)
 ```
