@@ -670,6 +670,8 @@ Here, as it can be seen, the loop handles the error and deals with it by calling
 This is our code right now:
 
 [source code](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/blob/main/source/p2_v1.py)
+
+
 Which actually works pretty accurate, but the car needs to be faster, we are not in a Fiat 500 :)
 
 After implementing this PID, we realized that although the code is working perfectly and the car stays on the line the whole time with smooth movements. We needed to do something else so that the car could go faster and complete one entire lap in less than one or two minutes. That is when we came up with an idea, a new PID controller for the linear speed so that the car itself can regulate the way it behaves, depending on the track. So that if it is following the line in a straight line, the speed will work different than when the car is turning. 
