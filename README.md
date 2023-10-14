@@ -671,7 +671,7 @@ This is our code right now:
 
 [source code](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/blob/main/source/p2_v1.py)
 
-
+This code was taking less than 3 minutes.
 Which actually works pretty accurate, but the car needs to be faster, we are not in a Fiat 500 :)
 
 After implementing this PID, we realized that although the code is working perfectly and the car stays on the line the whole time with smooth movements. We needed to do something else so that the car could go faster and complete one entire lap in less than one or two minutes. That is when we came up with an idea, a new PID controller for the linear speed so that the car itself can regulate the way it behaves, depending on the track. So that if it is following the line in a straight line, the speed will work different than when the car is turning. 
@@ -764,7 +764,7 @@ def get_mid_centroid():
   return centroid
 ```
 
-The main issue with this code is that it takes much longer to proccess itself, that is why the PIDs are not working the same way as before and the code is really unestable, allowing the car to get out of the track and hit himself.
+The main issue with this code is that it takes much longer to proccess itself, that is why the PIDs are not working the same way as before and the code is really unestable, allowing the car to get out of the track and hit himself. Apart from that we could complete a lap in approximately 30 seconds less than before, but this is not good enough, comparing it with all the issues we got.
 
 [This is the code with the implementation](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/blob/main/source/p2_v3.py)
 
