@@ -770,6 +770,8 @@ The main issue with this code is that it takes much longer to proccess itself, t
 
 -----------------------------------------------------------------------------------
 
+### Final code 2
+
 Overall, we decided to take the first code as the final one. Even though is the easiest one to implement, it is incredibly reliable, and that is what we are looking for in this exercise.
 
 This code can be seen in here:
