@@ -18,7 +18,7 @@ integral_e_lin =0
 lowest_thresh = np.array([0, 43, 46])
 top_thresh = np.array([26,255,255])
 
-curve_threshold = 0.2
+curve_threshold = 0.7
 
 #curves
 Kp = 1
@@ -29,9 +29,7 @@ Kd = 2.5
 Kp_l=1
 Ki_l=0.0001
 Kd_l= 2.5
-
-
-
+counter = 0
 
 D_iter = 5
 E_iter = 1
@@ -60,7 +58,29 @@ def get_centroid(mask):
   centroid = (cx,cy)
   return centroid
 
+def get_top_centroid(mask):
+  # caculate the center of the line
+  # Calcula los momentos
+  # Encuentra los contornos en la máscara
+  contours, _ = cv.findContours(mask, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
 
+  # Inicializa las coordenadas del punto más alto
+  highest_point = None
+
+  # Encuentra el punto más alto entre los contornos
+  for contour in contours:
+    if len(contour) > 0:
+        top_point = tuple(contour[contour[:, :, 1].argmin()][0])
+        if highest_point is None or top_point[1] < highest_point[1]:
+            highest_point = top_point
+
+  # Dibuja un círculo en el punto más alto
+  if highest_point is not None:
+    cv.circle(img, highest_point, 5, (0, 0, 255), -1)
+
+  centroid = (highest_point)
+  return centroid
+  
 
 def calculate_angular_velocity(error):
   global prev_error, integral_e
@@ -96,6 +116,20 @@ def calculate_linear_velocity(error):
   return angular
 
 
+def go_straight(linear_error):
+  #straight line PID
+  print("straight")
+  linear=calculate_linear_velocity(linear_error)
+  HAL.setW(linear)
+  HAL.setV(8)
+  
+def go_curve(cur_error):
+  print("Curve")
+  angular=calculate_angular_velocity(cur_error)
+  HAL.setW(angular)
+  HAL.setV(4)
+
+
 while True:
     #get image
     img = HAL.getImage()
@@ -103,24 +137,40 @@ while True:
     height, width, channel = img.shape
     #get the mask with the red filters
     mask=get_red_mask(img)
+    top_centroid = get_top_centroid(mask)
     #get the centroid of the red line at every time
     centroid=get_centroid(mask)
+    
+    #print("centroid= ",centroid)
+    #print("top_centroid= ",top_centroid)
     
     #PID control
     cur_error = -(centroid[0] - (width/2)) /300
     linear_error = cur_error
     
-    print("Err: ", cur_error)
     
-    if abs(cur_error) > curve_threshold:
-      #Curve PID
+    curve_threshold=abs(centroid[0]- top_centroid[0])
+    print(curve_threshold)
+    
+    if (curve_threshold < 20):
+      counter +=1
+      if counter >= 5:
+        print("straight")
+        linear=calculate_linear_velocity(linear_error)
+        HAL.setW(linear)
+        HAL.setV(8)
+      
+    if (curve_threshold > 20):
       print("Curve")
       angular=calculate_angular_velocity(cur_error)
       HAL.setW(angular)
       HAL.setV(4)
-    else:
-      #straight line PID
-      print("straight")
-      linear=calculate_linear_velocity(linear_error)
-      HAL.setW(linear)
-      HAL.setV(8)
+      counter = 0
+    #print("Err: ", cur_error)
+    
+    #if abs(cur_error) > curve_threshold:
+    #Curve PID
+      
+   
+      
+    GUI.showImage(img)
