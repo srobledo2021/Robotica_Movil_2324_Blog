@@ -768,5 +768,10 @@ The main issue with this code is that it takes much longer to proccess itself, t
 
 [This is the code with the implementation](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/blob/main/source/p2_v3.py)
 
+-----------------------------------------------------------------------------------
+
 Overall, we decided to take the first code as the final one. Even though is the easiest one to implement, it is incredibly reliable, and that is what we are looking for in this exercise.
 
+This code can be seen in here:
+
+[Accurate Implementation](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/blob/main/source/p2_v1.py)
