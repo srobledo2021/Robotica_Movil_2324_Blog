@@ -829,7 +829,9 @@ curve_threshold=abs(centroid[0]- top_centroid[0])
 ```
 As we can notice, we left a gap in the conditionals for the threshold. We did this on purpose to apply 'histeresis' so that instead of an abrupt change, we make it smooth.
 
-The counter that can be seen is used 
+The counter that can be seen is perfectly studied and used so that when the car recognises more than 5 times in a row that it is in a straight line, the car speeds up. This is because sometimes when the car is turning, a few iterations recognized the line as straight. By using this we can ensure that the car is really in a straight line, and not just turning but heading the front.
+
+
 
 ### Final code 2
 
