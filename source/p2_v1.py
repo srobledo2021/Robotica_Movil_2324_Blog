@@ -3,14 +3,11 @@ from HAL import HAL
 import numpy as np
 import cv2 as cv
 
-
 keneral = np.ones((4,4))
 prev_error = 0
 integral_e = 0
 lowest_thresh = np.array([0, 43, 46])
 top_thresh = np.array([26,255,255])
-
-curve_threshold=1
 
 #curves
 Kp = 1
@@ -19,7 +16,6 @@ Kd = 2.5
 
 D_iter = 5
 E_iter = 1
-
 
 def get_red_mask(img):
   #process the image and reduce noise and small pixel variations.
@@ -31,9 +27,8 @@ def get_red_mask(img):
     #dilate and erode the mask
     d = cv.dilate(res, kernel=keneral, iterations=D_iter)
     e = cv.erode(d, kernel=keneral, iterations=E_iter)
-    
     return e
-
+  
 
 def get_centroid(mask):
   # caculate the center of the line
@@ -43,7 +38,6 @@ def get_centroid(mask):
   cv.circle(img, (cx, cy), 20, (0, 0, 255), -1)
   centroid = (cx,cy)
   return centroid
-
 
 
 def calculate_angular_velocity(error):
@@ -75,7 +69,6 @@ while True:
     cur_error = -(centroid[0] - (width/2))/300
     linear_error = cur_error
     
-
     print("Curve")
     angular=calculate_angular_velocity(cur_error)
     HAL.setW(angular)
