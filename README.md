@@ -758,7 +758,78 @@ while True:
 ```
 Which actually works pretty accurate, but the car needs to be faster, we are not in a Fiat 500 :)
 
-After implementing this PID, we realized that although the code is working perfectly and the car stays on the line the whole time with smooth movements. We needed to do something else so that the car could go faster and complete one entire lap in less than one or two minutes. That is when we came up with an idea, a new PID controller for the linear speed so that the car itself can regulate the way it behaves, depending on the track. So that if it is following the line in a straight line, the speed will work different than when the car is turning. Assuming all of that, here is how the implementation works:
+After implementing this PID, we realized that although the code is working perfectly and the car stays on the line the whole time with smooth movements. We needed to do something else so that the car could go faster and complete one entire lap in less than one or two minutes. That is when we came up with an idea, a new PID controller for the linear speed so that the car itself can regulate the way it behaves, depending on the track. So that if it is following the line in a straight line, the speed will work different than when the car is turning. 
+
+After trials and errors, we came up with a brand-new idea, which is the following:
+We need to have 2 PID controllers. Both of them will be handling the angular speed, but this time we will be measuring a threshold to determinate whether the car is in a straight line or in a curve. 
+Errors for both controllers:
+```python3
+#angular error handling
+prev_error = 0
+integral_e = 0
+
+#linear error handling
+prev_error_lin=0
+integral_e_lin =0
+```
+PIDs:
+```python3
+#curves
+Kp = 1
+Ki = 0.0001
+Kd = 2.5
+
+#straight lines
+Kp_l=1
+Ki_l=0.0001
+Kd_l= 2.5
+```
+
+The way we are going to implement this is by measuring where the centroid of the line is at every time ( after getting the mask) and comparing it to the location of the center of the line, but a bit higher. In this way we can get the difference between coordinates in the X axis and stablish a threshold. This threshold is there to decide whether the car is taking a straight line at a high-speed or just turning in a curve. Here is the implementation in the 'get_top_centroid' function which returns that point mentioned before:
+
+```python3
+def get_top_centroid(mask):
+  contours, _ = cv.findContours(mask, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+
+  highest_point = None
+  for contour in contours:
+    if len(contour) > 0:
+        top_point = tuple(contour[contour[:, :, 1].argmin()][0])
+        if highest_point is None or top_point[1] < highest_point[1]:
+            highest_point = top_point
+
+  if highest_point is not None:
+    cv.circle(img, highest_point, 5, (0, 0, 255), -1)
+
+  centroid = (highest_point)
+  return centroid
+```
+
+![image](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/76b859b2-0df6-4872-8d03-26650b6a825e)
+
+Now we can get the difference in X axis coordinates and depending on that, effectuate our code:
+```python3
+#get threshold
+curve_threshold=abs(centroid[0]- top_centroid[0])
+    
+    if (curve_threshold < 15):
+      counter +=1
+      if counter >= 5:
+        print("straight")
+        linear=calculate_linear_velocity(linear_error)
+        HAL.setW(linear)
+        HAL.setV(15)
+      
+    if (curve_threshold > 20):
+      print("Curve")
+      angular=calculate_angular_velocity(cur_error)
+      HAL.setW(angular)
+      HAL.setV(4)
+      counter = 0
+```
+As we can notice, we left a gap in the conditionals for the threshold. We did this on purpose to apply 'histeresis' so that instead of an abrupt change, we make it smooth.
+
+The counter that can be seen is used 
 
 ### Final code 2
 
