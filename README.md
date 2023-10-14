@@ -830,7 +830,29 @@ curve_threshold=abs(centroid[0]- top_centroid[0])
 As we can notice, we left a gap in the conditionals for the threshold. We did this on purpose to apply 'histeresis' so that instead of an abrupt change, we make it smooth.
 
 The counter that can be seen is perfectly studied and used so that when the car recognises more than 5 times in a row that it is in a straight line, the car speeds up. This is because sometimes when the car is turning, a few iterations recognized the line as straight. By using this we can ensure that the car is really in a straight line, and not just turning but heading the front.
-[Code for this version here]()
+
+[Code for this version here](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/blob/main/source/p2_v2.py)
+
+The code works but there is still something missing. This is the time when we realize that it is much better for the car to keep the reference of the central point (cx, cy) instead of the 'line' point. This is why the same code as before was implemented but using this new point, as we can see here:
+
+![image](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/b55a7fd9-0048-414f-b877-e82961908460)
+
+We changed the function that originated the other point with this new one:
+```python3
+def get_mid_centroid():
+  cx=320
+  cy=225
+  cv.circle(img, (cx, cy), 20, (0, 0, 255), -1)
+  centroid=(cx,cy)
+  
+  return centroid
+```
+
+The main issue with this code is that it takes much longer to proccess itself, that is why the PIDs are not working the same way as before and the code is really unestable, allowing the car to get out of the track and hit himself.
+
+[This is the code with the implementation]
+
+Overall, we decided to take the first code. Even though is the easiest one to implement, it is incredibly reliable, and that is what we are looking for in this exercise.
 
 ### Final code 2
 
