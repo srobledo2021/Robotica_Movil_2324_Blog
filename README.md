@@ -772,8 +772,19 @@ The main issue with this code is that it takes much longer to proccess itself, t
 
 ### Final code 2
 
-Overall, we decided to take the first code as the final one. Even though is the easiest one to implement, it is incredibly reliable, and that is what we are looking for in this exercise.
+Overall, we decided to take the first code as the final one. Even though it is the easiest one to implement, it is incredibly reliable, and that is what we are looking for in this exercise.
+We even realized that once you run the code more than once, the car works different at the very beginning, this may be because the page saves previous data and once you run the code, it will start with that data saved. This can be seen when you stop running the code and leave the car turning. When re-running the code again, it works for a couple of seconds as if it was still turning.
+
+Now it is time to adjust the PID even more. After trials and errors adjusting the PID values, we came up with the final ones, which are:
+Kp = 1
+Ki = 0.001
+Kd = 2.5
+
+Now you can run the code and the car will keep on the track forever!
 
 This code can be seen in here:
-
 [Accurate Implementation](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/blob/main/source/p2_v1.py)
+
+
+https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/73f3e8ab-d263-4081-b48e-5f2f63e001f4
+
