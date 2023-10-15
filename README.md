@@ -772,8 +772,9 @@ The main issue with this code is that it takes much longer to proccess itself, t
 
 ### Final code 2
 
-Overall, we decided to take the first code as the final one. Even though it is the easiest one to implement, it is incredibly reliable, and that is what we are looking for in this exercise.
-We even realized that once you run the code more than once, the car works different at the very beginning, this may be because the page saves previous data and once you run the code, it will start with that data saved. This can be seen when you stop running the code and leave the car turning. When re-running the code again, it works for a couple of seconds as if it was still turning.
+Overall, we decided to take the first code as the final one. Even though it is the easiest one to implement, it is incredibly reliable, and that is what we are looking for in this exercise. The other implementations worked well and were well designed but the objective is to follow the line, and they made the car speed up much more, however, the line was not followed as expected.
+
+We even realized that once you run the code more than once, the car works different at the very beginning, this may be because the page saves previous data and once you run the code, it will start with that data saved. This can be seen when you stop running the code and leave the car turning. When re-running the code again, it works for a couple of seconds as if it was still turning, and then it behaves slightly different as the previous time.
 
 Now it is time to adjust the PID even more. After trials and errors adjusting the PID values, we came up with the final ones, which are:
 Kp = 1
