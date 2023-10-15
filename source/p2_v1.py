@@ -3,22 +3,28 @@ from HAL import HAL
 import numpy as np
 import cv2 as cv
 
+
 keneral = np.ones((4,4))
-prev_error = 0
-integral_e = 0
+
 lowest_thresh = np.array([0, 43, 46])
 top_thresh = np.array([26,255,255])
 
+#define error variables
+prev_error = 0
+integral_e = 0
+
 #curves
 Kp = 1
-Ki = 0.0001
+Ki = 0.001
 Kd = 2.5
 
+#image filters
 D_iter = 5
 E_iter = 1
 
+
 def get_red_mask(img):
-  #process the image and reduce noise and small pixel variations.
+    #process the image and reduce noise and small pixel variations.
     hsv = cv.cvtColor(img, cv.COLOR_BGR2HSV)
     blur = cv.GaussianBlur(hsv, (5,5), 0)
 
@@ -27,8 +33,9 @@ def get_red_mask(img):
     #dilate and erode the mask
     d = cv.dilate(res, kernel=keneral, iterations=D_iter)
     e = cv.erode(d, kernel=keneral, iterations=E_iter)
+    
     return e
-  
+
 
 def get_centroid(mask):
   # caculate the center of the line
@@ -42,13 +49,13 @@ def get_centroid(mask):
 
 def calculate_angular_velocity(error):
   global prev_error, integral_e
-  #proportional error
+  #apply the PID
   P = Kp * error
   D = Kd * ( error - prev_error)
   
   prev_error = error
-  integral_e += error
   
+  integral_e += error
   I = Ki * integral_e
   
   angular= P + I + D
@@ -68,9 +75,9 @@ while True:
     #PID control
     cur_error = -(centroid[0] - (width/2))/300
     linear_error = cur_error
-    
-    print("Curve")
     angular=calculate_angular_velocity(cur_error)
+    
+    #move the car
     HAL.setW(angular)
     HAL.setV(4)
     
