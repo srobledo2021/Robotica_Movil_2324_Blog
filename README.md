@@ -794,7 +794,35 @@ This code can be seen in here:
 https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/73f3e8ab-d263-4081-b48e-5f2f63e001f4
 
 
+---------------------------------------------------------------------------------------
 
 ## Obstacle Avoidance
 
 ### Introduction 3
+The goal of this exercise is to control a car so that it keeps on track as well as it is avoiding other cars which are displayed on different parts of the racing circuit.
+
+### API 3
+
+from HAL import HAL - to import the HAL(Hardware Abstraction Layer) library class. This class contains the functions that sends and receives information to and from the Hardware(Gazebo).
+from GUI import GUI - to import the GUI(Graphical User Interface) library class. This class contains the functions used to view the debugging information, like image widgets.
+HAL.getPose3d().x - to get the position of the robot (x coordinate)
+HAL.getPose3d().y - to obtain the position of the robot (y coordinate)
+HAL.getPose3d().yaw - to get the orientation of the robot with regarding the map
+HAL.getLaserData() - to obtain laser sensor data It is composed of 180 pairs of values: (0-180º distance in millimeters)
+HAL.getImage() - to get the image
+HAL.setV() - to set the linear speed
+HAL.setW() - to set the angular velocity
+GUI.showImage() - allows you to view a debug image or with relevant information
+Own API
+
+To simplify, the implementation of control points is offered. To use it, only two actions must be carried out:
+
+Obtain the following point:
+
+currentTarget = GUI.map.getNextTarget()
+
+Mark it as visited when necessary:
+
+currentTarget.setReached(True)
+
+
