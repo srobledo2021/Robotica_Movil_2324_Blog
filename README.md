@@ -832,7 +832,7 @@ GUI.showForces(carForce, obsForce, avgForce)
 ```
 As well as the destination that we have assigned:
 
-# Current target
+ Current target
 ```python3
 target = [1.0, 1.0]
 GUI.showLocalTarget(target)
@@ -871,10 +871,9 @@ Each object in the environment generates a repulsive force towards the robot. De
 In this pic we can see the three vectors all together:
 
 ![vff_forces](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/9b6a3792-2d15-4e63-829d-23a7ee142634)
-
-# Car direction  (green line in the image)
-# Obstacles direction (red line in the image)
-# Average direction (black line in the image)
+ Car direction  (green line in the image)
+ Obstacles direction (red line in the image)
+ Average direction (black line in the image)
 
 
 
