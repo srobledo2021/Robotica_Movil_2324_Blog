@@ -803,26 +803,105 @@ The goal of this exercise is to control a car so that it keeps on track as well 
 
 ### API 3
 
-from HAL import HAL - to import the HAL(Hardware Abstraction Layer) library class. This class contains the functions that sends and receives information to and from the Hardware(Gazebo).
-from GUI import GUI - to import the GUI(Graphical User Interface) library class. This class contains the functions used to view the debugging information, like image widgets.
-HAL.getPose3d().x - to get the position of the robot (x coordinate)
-HAL.getPose3d().y - to obtain the position of the robot (y coordinate)
-HAL.getPose3d().yaw - to get the orientation of the robot with regarding the map
-HAL.getLaserData() - to obtain laser sensor data It is composed of 180 pairs of values: (0-180º distance in millimeters)
-HAL.getImage() - to get the image
-HAL.setV() - to set the linear speed
-HAL.setW() - to set the angular velocity
-GUI.showImage() - allows you to view a debug image or with relevant information
-Own API
+- from HAL import HAL - to import the HAL(Hardware Abstraction Layer) library class. This class contains the functions that sends and receives information to and from the Hardware(Gazebo).
+- from GUI import GUI - to import the GUI(Graphical User Interface) library class. This class contains the functions used to view the debugging information, like image widgets.
+- HAL.getPose3d().x - to get the position of the robot (x coordinate)
+- HAL.getPose3d().y - to obtain the position of the robot (y coordinate)
+- HAL.getPose3d().yaw - to get the orientation of the robot with regarding the map
+- HAL.getLaserData() - to obtain laser sensor data It is composed of 180 pairs of values: (0-180º distance in millimeters)
+- HAL.getImage() - to get the image
+- HAL.setV() - to set the linear speed
+- HAL.setW() - to set the angular velocity
+- GUI.showImage() - allows you to view a debug image or with relevant information
 
 To simplify, the implementation of control points is offered. To use it, only two actions must be carried out:
 
-Obtain the following point:
+- currentTarget = GUI.map.getNextTarget() - Obtain the following point:
+- currentTarget.setReached(True) - Mark it as visited when necessary:
 
-currentTarget = GUI.map.getNextTarget()
+The graphical interface (GUI) allows to visualize each of the vectors of calculated forces. There is a function for this purpose:
+```python3
+# Car direction  (green line in the image below)
+carForce = [2.0, 0.0]
+# Obstacles direction (red line in the image below)
+obsForce = [0.0, 2.0]
+# Average direction (black line in the image below)
+avgForce = [-2.0, 0.0]
 
-Mark it as visited when necessary:
+GUI.showForces(carForce, obsForce, avgForce)
+```
+As well as the destination that we have assigned:
 
-currentTarget.setReached(True)
+# Current target
+```python3
+target = [1.0, 1.0]
+GUI.showLocalTarget(target)
+```
+
+More can be seen at Unibotics webpage:
+[Webpage Link](https://jderobot.github.io/RoboticsAcademy/exercises/AutonomousCars/obstacle_avoidance)
+
+Taking all of this, now it is time for the implementation:
+
+### Steps 3
+
+First of all we will be implementing the laser. We will be doing that with this function:
+
+```python3
+def parse_laser_data (laser_data):
+    laser = []
+    i = 0
+    while (i < 180):
+        dist = laser_data.values[i]
+        if dist > 10:
+            dist = 10
+        angle = math.radians(i-90) # because the front of the robot is -90 degrees
+        laser += [(dist, angle)]
+        i+=1
+    return laser
+```
+The  function parses laser data taking into account that the laser only has 180º of  coverage and that the measure read at 90º corresponds to the ‘front’ of the robot.
+
+-----------------------------------------------------------
+
+Navigation using VFF (Virtual Force Field), is going to be the navigation algorithm that we will be using this time. The way it is done is the following:
+
+Each object in the environment generates a repulsive force towards the robot. Destiny generates an attractive force in the robot. This makes it possible for the robot to go towards the target, distancing itself of the obstacles, so that their address is the vector sum of all the forces.
+
+In this pic we can see the three vectors all together:
+
+![vff_forces](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/9b6a3792-2d15-4e63-829d-23a7ee142634)
+
+# Car direction  (green line in the image)
+# Obstacles direction (red line in the image)
+# Average direction (black line in the image)
 
 
+
+
+
+Now it is time to implement the coordinate system that we will be using to create the VFF mentioned:
+
+We have 2 different coordinate systems in this exercise.
+
+- Absolute coordinate system: Its origin (0,0) is located in the finish line of the circuit (exactly where the F1 starts the lap).
+- Relative coordinate system: It is the coordinate system solidary to the robot (F1). Positive values of X means ‘forward’, and positive values of Y means ‘left’.
+We will be using the following code to convert absolute coordinates to relative ones.
+
+```python3
+def absolute2relative (x_abs, y_abs, robotx, roboty, robott):
+
+    # robotx, roboty are the absolute coordinates of the robot
+    # robott is its absolute orientation
+    # Convert to relatives
+    dx = x_abs - robotx
+    dy = y_abs - roboty
+
+    # Rotate with current angle
+    x_rel = dx * math.cos (-robott) - dy * math.sin (-robott)
+    y_rel = dx * math.sin (-robott) + dy * math.cos (-robott)
+
+    return x_rel and y_rel
+```
+
+Now we are using both functions to build the code
