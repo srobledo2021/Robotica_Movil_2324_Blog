@@ -10,7 +10,11 @@
   - [API](#API-2)
   - [Steps](#Steps-2)
   - [Final Code](#Final-code-2)
-
+- [Exercise 3: Obstacle Avoidance](#Obstacle-Avoidance)
+  - [Introduction](#Introduction-3)
+  - [API](#API-3)
+  - [Steps](#Steps-3)
+  - [Final Code](#Final-code-3)
 ----------------------------------------------------------------------------------
 # Vacuum cleaner
 
@@ -789,3 +793,8 @@ This code can be seen in here:
 
 https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/73f3e8ab-d263-4081-b48e-5f2f63e001f4
 
+
+
+## Obstacle Avoidance
+
+### Introduction 3
