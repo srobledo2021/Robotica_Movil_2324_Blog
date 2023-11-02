@@ -75,13 +75,10 @@ while True:
     # Car direction defined in a green vector
     car_vect = [max(min(target_rel_x, 3.5), -3.5), max(min(target_rel_y, 3.2), -3.2)]
     # obstacle direction defined in a red vector
-    obs_vect = [get_repulsive_force(laser)[0]*4, get_repulsive_force(laser)[1]*12]
+    obs_vect = [get_repulsive_force(laser)[0]*3, get_repulsive_force(laser)[1]*8]
     # average direction defined in a black line
-    avg_vector = [(car_vect[0]+obs_vect[0])*1.5, (car_vect[1] + obs_vect[1]) *0.6]
+    avg_vector = [(car_vect[0]+obs_vect[0])*1, (car_vect[1] + obs_vect[1]) *0.3]
 
-    print("CAR: ",car_vect)
-    print("OBS: ",obs_vect)
-    print("AVG: ",avg_vector)
 
     tan = math.tan(avg_vector[1]/avg_vector[0])
 
@@ -102,3 +99,4 @@ while True:
 
     GUI.showForces(car_vect, obs_vect, avg_vector)
     GUI.showImage(image)
+    
