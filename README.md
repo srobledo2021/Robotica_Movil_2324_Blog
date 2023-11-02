@@ -976,13 +976,27 @@ Check if the robot is close to the objective and if so, set the current objectiv
       HAL.setW(tan * 1.5)
       HAL.setV(avg_vector[0])
 ```
-
+Now we show the target, as well as the vectors of the three forces and the current image on the screen.
 ```python3
-   GUI.showLocalTarget(relative_target)
-
+    GUI.showLocalTarget(relative_target)
     GUI.showForces(car_vect, obs_vect, avg_vector)
     GUI.showImage(image)
-    
+```
+----------------------------------------------------------------------------------------
+
+After all of this, the code will work. However, it took a very lonng time to check different values to multiply the vectors so that the robot evaded other cars perfectly. At first, most of the cars were evaded perfectly but there were 3 of them which our robot could not. That is why I came up with a brand-new solution, which was to decrease speed, allowing us to react with more time and precission. How did we manage to do that? By reducing the total vector or average vector (the sum of other both). In this way we can reduce the speed(as it is used for setting the robot speed).
+
+Then I came up with the idea of increasing the repulsion vector so that the sooner the car detects an 'anomaly' (and by anomaly, I mean an obstacle that pops out of nowhere), the better reaction it can have, allowing the car to take a sharp turn when necessary. 
+
+In the end, after lots of changes, improvements and by trials and errors, these are the values that make the code work perfectly:
+
+```python3
+# Car direction defined in a green vector
+    car_vect = [max(min(target_rel_x, 3.5), -3.5), max(min(target_rel_y, 3.2), -3.2)]
+    # obstacle direction defined in a red vector
+    obs_vect = [get_repulsive_force(laser)[0]*3, get_repulsive_force(laser)[1]*8]
+    # average direction defined in a black line
+    avg_vector = [(car_vect[0]+obs_vect[0])*1, (car_vect[1] + obs_vect[1]) *0.3]
 ```
 
 ## Testing the code
