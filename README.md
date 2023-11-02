@@ -984,3 +984,7 @@ Check if the robot is close to the objective and if so, set the current objectiv
     GUI.showImage(image)
     
 ```
+
+## Testing the code
+[Video Part1](./source/p3_part1.mp4)
+[Video Part2](./source/p3_part2.mp4)
