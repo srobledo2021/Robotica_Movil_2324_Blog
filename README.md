@@ -885,7 +885,7 @@ We have 2 different coordinate systems in this exercise.
 
 - Absolute coordinate system: Its origin (0,0) is located in the finish line of the circuit (exactly where the F1 starts the lap).
 - Relative coordinate system: It is the coordinate system solidary to the robot (F1). Positive values of X means ‘forward’, and positive values of Y means ‘left’.
-We will be using the following code to convert absolute coordinates to relative ones.
+We will be using the following function to convert absolute coordinates to relative ones.
 
 ```python3
 def absolute2relative (x_abs, y_abs, robotx, roboty, robott):
@@ -903,4 +903,79 @@ def absolute2relative (x_abs, y_abs, robotx, roboty, robott):
     return x_rel and y_rel
 ```
 
-Now we are using both functions to build the code
+Now our code will work like this:
+```python3
+    #get image
+    image=HAL.getImage()
+    #get laser
+    laser_data = HAL.getLaserData()
+    laser = parse_laser_data(laser_data)
+    #----------------------------------------------
+    # Get absolute position of current target
+    currentTarget = GUI.map.getNextTarget()
+    target_abs_x = currentTarget.getPose().x
+    target_abs_y = currentTarget.getPose().y
+    #----------------------------------------------
+    absolute_target = target_abs_x, target_abs_y
+    #----------------------------------------------
+    # Get robot position and orientation
+    robot_x = HAL.getPose3d().x
+    robot_y = HAL.getPose3d().y
+    robot_yaw = HAL.getPose3d().yaw
+    #----------------------------------------------
+    #get relative coordinates of target
+    target_rel_x,target_rel_y = absolute2relative(target_abs_x,target_abs_y,robot_x,robot_y,robot_yaw)
+    relative_target = target_rel_x, target_rel_y
+
+```
+
+```python3
+    # Car direction defined in a green vector
+    car_vect = [max(min(target_rel_x, 3.5), -3.5), max(min(target_rel_y, 3.2), -3.2)]
+    # obstacle direction defined in a red vector
+    obs_vect = [get_repulsive_force(laser)[0]*5, get_repulsive_force(laser)[1]*15]
+    # average direction defined in a black line
+    avg_vector = [(car_vect[0]+obs_vect[0])*1.5, (car_vect[1] + obs_vect[1]) *0.6]
+```
+Where the get_repulsive_force() function can be defined as:
+
+```python3
+def get_repulsive_force(parse_laser):
+    laser = parse_laser
+    
+    laser_vectorized = []
+    for dist, angle in laser:
+      
+        x = 1/dist * math.cos(angle) * -1
+        y = 1/dist * math.sin(angle) * -1
+
+        v = (x,y)
+        laser_vectorized += [v]
+    laser_mean = np.mean(laser_vectorized, axis=0)
+    return laser_mean
+```
+Check if the robot is close to the objective and if so, set the current objective as 'reached'.
+```python3
+    tan = math.tan(avg_vector[1]/avg_vector[0])
+
+    if (target_rel_x < 1.5 and target_rel_y < 1.5):
+        currentTarget.setReached(True)
+
+```        
+
+```python3
+    if(avg_vector[0]<0):
+      HAL.setW(5)
+      HAL.setV(0.0)
+    else:
+      HAL.setW(tan * 1.5)
+      HAL.setV(avg_vector[0])
+```
+
+```python3
+   GUI.showLocalTarget(relative_target)
+
+    GUI.showForces(car_vect, obs_vect, avg_vector)
+    GUI.showImage(image)
+    
+```
