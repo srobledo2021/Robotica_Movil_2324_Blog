@@ -929,14 +929,6 @@ Now our code will work like this:
 
 ```
 
-```python3
-    # Car direction defined in a green vector
-    car_vect = [max(min(target_rel_x, 3.5), -3.5), max(min(target_rel_y, 3.2), -3.2)]
-    # obstacle direction defined in a red vector
-    obs_vect = [get_repulsive_force(laser)[0]*5, get_repulsive_force(laser)[1]*15]
-    # average direction defined in a black line
-    avg_vector = [(car_vect[0]+obs_vect[0])*1.5, (car_vect[1] + obs_vect[1]) *0.6]
-```
 Where the get_repulsive_force() function can be defined as:
 
 ```python3
@@ -954,6 +946,18 @@ def get_repulsive_force(parse_laser):
     laser_mean = np.mean(laser_vectorized, axis=0)
     return laser_mean
 ```
+This function usage is pretty simple, the parameter is the laser data (already parsed) and it returns a vector pointing to the opposite way of where the 'mean of obstacles detected' are. We take both distance and angle (polar coordinates) from the laser data of the parameter and we convert them into Cartesian coordinates (x and y). Then we create the vector 'v' with both coordinates and add it to our list. In the end we can create a mean so that we only return one vector with the direction of the repulsive force. As the code is iterating the whole time, whenever a car is spotted, it instantly evades it as the mean of vectors changes instantly.
+
+After that, it is time to define the three vectors that we already mentioned at the beggining. The first one is the car vector. The second one is the obstacle vector, which will be using the function we mentioned before to get the vector and we can multiply it by a number so that we can reduce or enlarge it. Same is done with the average vector (or mean vector) which calculates the total force taking into account both vectors repuslive and car vector. We will also use some numbers to modify results by multiplying them by both coordinates.
+```python3
+    # Car direction defined in a green vector
+    car_vect = [max(min(target_rel_x, 3.5), -3.5), max(min(target_rel_y, 3.2), -3.2)]
+    # obstacle direction defined in a red vector
+    obs_vect = [get_repulsive_force(laser)[0]*5, get_repulsive_force(laser)[1]*15]
+    # average direction defined in a black line
+    avg_vector = [(car_vect[0]+obs_vect[0])*1.5, (car_vect[1] + obs_vect[1]) *0.6]
+```
+
 Check if the robot is close to the objective and if so, set the current objective as 'reached'.
 ```python3
     tan = math.tan(avg_vector[1]/avg_vector[0])
