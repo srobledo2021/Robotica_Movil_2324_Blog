@@ -75,7 +75,7 @@ while True:
     # Car direction defined in a green vector
     car_vect = [max(min(target_rel_x, 3.5), -3.5), max(min(target_rel_y, 3.2), -3.2)]
     # obstacle direction defined in a red vector
-    obs_vect = [get_repulsive_force(laser)[0]*5, get_repulsive_force(laser)[1]*15]
+    obs_vect = [get_repulsive_force(laser)[0]*4, get_repulsive_force(laser)[1]*12]
     # average direction defined in a black line
     avg_vector = [(car_vect[0]+obs_vect[0])*1.5, (car_vect[1] + obs_vect[1]) *0.6]
 
@@ -85,21 +85,20 @@ while True:
 
     tan = math.tan(avg_vector[1]/avg_vector[0])
 
-    if (target_rel_x < 2 and target_rel_y < 2):
+    if (target_rel_x < 1.5 and target_rel_y < 1.5):
         currentTarget.setReached(True)
         
 
-    if(avg_vector[0]<0):
-      HAL.setW(5)
-      HAL.setV(0.0)
-    else:
-      HAL.setW(tan * 1.5)
-      HAL.setV(avg_vector[0])
-  
+    #if(avg_vector[0]<0):
+    #  HAL.setW(5)
+    #  HAL.setV(0.0)
+    #else:
+    #  HAL.setW(tan * 1.5)
+    #  HAL.setV(avg_vector[0])
+    HAL.setW(tan * 1.5)
+    HAL.setV(avg_vector[0])
 
     GUI.showLocalTarget(relative_target)
 
     GUI.showForces(car_vect, obs_vect, avg_vector)
     GUI.showImage(image)
-    
-    
