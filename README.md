@@ -952,7 +952,7 @@ After that, it is time to define the three vectors that we already mentioned at 
 The first one is the car vector. We need it to keep constantly pointing at targets, that is why we use the target relative coordinates to define it. However, as we need it for the total/average force vector, and later for the speed, we will need to reduce and control it.
 When we display the vectors(will be seen later) there is kind of a little 'bounding box' that can be used as a reference. Taking this into account, we can define the values that are defined on the code below, defining coordinates for the lenght of x and the lenght of y maximum so that in this way the vector is always 'locked' in that 3.5 x 3.2 box.
 
-The second one is the obstacle vector, which will be using the function we mentioned before to get the repulsive force vector and we can multiply it by a number so that in this way we can reduce or enlarge it. 
+The second one is the obstacle vector, which will be using the function we mentioned before to get the repulsive force vector and we can multiply it by a number so that in this way we can reduce or enlarge it. It is important to add that these values are arbitrary and will be changed later.
 
 Same is done with the third vector, the average vector (or mean vector). Which calculates the total force taking into account both vectors repuslive and car vector. We will also use some numbers to modify results by multiplying them by both coordinates.
 
@@ -972,7 +972,7 @@ Check if the robot is close to the objective(2 units) and if so, set the current
         currentTarget.setReached(True)
 ```        
 
-Now we define the linear and angular speed
+Now we define the linear and angular speed. We set the both speeds depending on the total/average vector.
 ```python3
       HAL.setW(tan * 1.5)
       HAL.setV(avg_vector[0])
@@ -985,9 +985,9 @@ Now we show the target, as well as the vectors of the three forces and the curre
 ```
 ----------------------------------------------------------------------------------------
 
-After all of this, the code will work. However, it took a very lonng time to check different values to multiply the vectors so that the robot evaded other cars perfectly. At first, most of the cars were evaded perfectly but there were 3 of them which our robot could not. That is why I came up with a brand-new solution, which was to decrease speed, allowing us to react with more time and precission. How did we manage to do that? By reducing the total vector or average vector (the sum of other both). In this way we can reduce the speed(as it is used for setting the robot speed).
+After all of this, the code will work. However, it took a very long time to check different values to multiply the vectors so that the robot evaded other cars perfectly. At first, most of the cars were evaded perfectly but there were 3 of them which our robot could not. That is why I came up with a brand-new solution, which was to decrease speed, allowing us to react with more time and precission. How did we manage to do that? By reducing the total vector or average vector (the sum of other both). In this way we can reduce the speed(as it is used for setting the robot speed).
 
-Then I came up with the idea of increasing the repulsion vector so that the sooner the car detects an 'anomaly' (and by anomaly, I mean an obstacle that pops out of nowhere), the better reaction it can have, allowing the car to take a sharp turn when necessary. 
+Then I came up with the idea of increasing the repulsion vector so that the sooner the car detects an 'anomaly' (and by anomaly, I mean an obstacle that pops out of nowhere), the better reaction it can have, allowing the car to take a sharp turn when necessary.
 
 In the end, after lots of changes, improvements and by trials and errors, these are the values that make the code work perfectly:
 
