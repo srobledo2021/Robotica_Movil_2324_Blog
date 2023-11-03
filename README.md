@@ -14,7 +14,7 @@
   - [Introduction](#Introduction-3)
   - [API](#API-3)
   - [Steps](#Steps-3)
-  - [Final Code](#Final-code-3)
+  - [Video](#Video)
 ----------------------------------------------------------------------------------
 # Vacuum cleaner
 
@@ -999,5 +999,5 @@ In the end, after lots of changes, improvements and by trials and errors, these 
     avg_vector = [(car_vect[0]+obs_vect[0])*1, (car_vect[1] + obs_vect[1]) *0.3]
 ```
 
-## Testing the code
+# Video
 [Video testing the code](https://youtu.be/Oz9GYynMgoA)
