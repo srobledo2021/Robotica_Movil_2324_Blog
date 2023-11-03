@@ -1000,5 +1000,4 @@ In the end, after lots of changes, improvements and by trials and errors, these 
 ```
 
 ## Testing the code
-[Video Part1](./source/p3_part1.mp4)
-[Video Part2](./source/p3_part2.mp4)
+[Video testing the code](https://youtu.be/Oz9GYynMgoA)
