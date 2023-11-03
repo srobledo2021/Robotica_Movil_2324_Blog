@@ -845,7 +845,7 @@ Taking all of this, now it is time for the implementation:
 
 ### Steps 3
 
-First of all we will be implementing the laser. We will be doing that with this function:
+First of all we will be implementing the laser. We will be doing it with this function:
 
 ```python3
 def parse_laser_data (laser_data):
@@ -876,17 +876,14 @@ In this pic we can see the three vectors all together:
  Obstacles direction (red line in the image)
  Average direction (black line in the image)
 
-
-
-
-
 Now it is time to implement the coordinate system that we will be using to create the VFF mentioned:
 
 We have 2 different coordinate systems in this exercise.
 
 - Absolute coordinate system: Its origin (0,0) is located in the finish line of the circuit (exactly where the F1 starts the lap).
 - Relative coordinate system: It is the coordinate system solidary to the robot (F1). Positive values of X means ‘forward’, and positive values of Y means ‘left’.
-We will be using the following function to convert absolute coordinates to relative ones.
+
+We will be using the following function to convert absolute coordinates to relative ones:
 
 ```python3
 def absolute2relative (x_abs, y_abs, robotx, roboty, robott):
@@ -904,7 +901,7 @@ def absolute2relative (x_abs, y_abs, robotx, roboty, robott):
     return x_rel and y_rel
 ```
 
-Now our code will work like this:
+Now the first part of our 'while' loop in the code, will work like this:
 ```python3
     #get image
     image=HAL.getImage()
@@ -930,7 +927,7 @@ Now our code will work like this:
 
 ```
 
-Where the get_repulsive_force() function can be defined as:
+We will also implement the 'get_repulsive_force()' function, which can be defined as:
 
 ```python3
 def get_repulsive_force(parse_laser):
@@ -949,7 +946,15 @@ def get_repulsive_force(parse_laser):
 ```
 This function usage is pretty simple, the parameter is the laser data (already parsed) and it returns a vector pointing to the opposite way of where the 'mean of obstacles detected' are. We take both distance and angle (polar coordinates) from the laser data of the parameter and we convert them into Cartesian coordinates (x and y). Then we create the vector 'v' with both coordinates and add it to our list. In the end we can create a mean so that we only return one vector with the direction of the repulsive force. As the code is iterating the whole time, whenever a car is spotted, it instantly evades it as the mean of vectors changes instantly.
 
-After that, it is time to define the three vectors that we already mentioned at the beginning. The first one is the car vector. The second one is the obstacle vector, which will be using the function we mentioned before to get the vector and we can multiply it by a number so that we can reduce or enlarge it. Same is done with the average vector (or mean vector) which calculates the total force taking into account both vectors repuslive and car vector. We will also use some numbers to modify results by multiplying them by both coordinates.
+-------------------------------------------------------------------------------------
+
+After that, it is time to define the three vectors that we already mentioned at the beginning. The first one is the car vector. We need it to keep constantly pointing at targets, that is why we use the target relative coordinates to define it. However, as we need it for the total/average force vector, and later for the speed, we will need to reduce and control it.
+When we display the vectors(will be seen later) there is kind of a little 'bounding box' that can be used as a reference.
+
+
+
+The second one is the obstacle vector, which will be using the function we mentioned before to get the vector and we can multiply it by a number so that we can reduce or enlarge it. 
+Same is done with the third vector, the average vector (or mean vector). Which calculates the total force taking into account both vectors repuslive and car vector. We will also use some numbers to modify results by multiplying them by both coordinates.
 ```python3
     # Car direction defined in a green vector
     car_vect = [max(min(target_rel_x, 3.5), -3.5), max(min(target_rel_y, 3.2), -3.2)]
