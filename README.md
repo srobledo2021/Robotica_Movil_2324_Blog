@@ -948,13 +948,14 @@ This function usage is pretty simple, the parameter is the laser data (already p
 
 -------------------------------------------------------------------------------------
 
-After that, it is time to define the three vectors that we already mentioned at the beginning. The first one is the car vector. We need it to keep constantly pointing at targets, that is why we use the target relative coordinates to define it. However, as we need it for the total/average force vector, and later for the speed, we will need to reduce and control it.
-When we display the vectors(will be seen later) there is kind of a little 'bounding box' that can be used as a reference.
+After that, it is time to define the three vectors that we already mentioned at the beginning. 
+The first one is the car vector. We need it to keep constantly pointing at targets, that is why we use the target relative coordinates to define it. However, as we need it for the total/average force vector, and later for the speed, we will need to reduce and control it.
+When we display the vectors(will be seen later) there is kind of a little 'bounding box' that can be used as a reference. Taking this into account, we can define the values that are defined on the code below, defining coordinates for the lenght of x and the lenght of y maximum so that in this way the vector is always 'locked' in that 3.5 x 3.2 box.
 
+The second one is the obstacle vector, which will be using the function we mentioned before to get the repulsive force vector and we can multiply it by a number so that in this way we can reduce or enlarge it. 
 
-
-The second one is the obstacle vector, which will be using the function we mentioned before to get the vector and we can multiply it by a number so that we can reduce or enlarge it. 
 Same is done with the third vector, the average vector (or mean vector). Which calculates the total force taking into account both vectors repuslive and car vector. We will also use some numbers to modify results by multiplying them by both coordinates.
+
 ```python3
     # Car direction defined in a green vector
     car_vect = [max(min(target_rel_x, 3.5), -3.5), max(min(target_rel_y, 3.2), -3.2)]
@@ -964,20 +965,15 @@ Same is done with the third vector, the average vector (or mean vector). Which c
     avg_vector = [(car_vect[0]+obs_vect[0])*1.5, (car_vect[1] + obs_vect[1]) *0.6]
 ```
 
-Check if the robot is close to the objective and if so, set the current objective as 'reached'.
+Check if the robot is close to the objective(2 units) and if so, set the current objective as 'reached'. It will later try to reach the next one.
 ```python3
     tan = math.tan(avg_vector[1]/avg_vector[0])
-
-    if (target_rel_x < 1.5 and target_rel_y < 1.5):
+    if (target_rel_x < 2 and target_rel_y < 2):
         currentTarget.setReached(True)
-
 ```        
 
+Now we define the linear and angular speed
 ```python3
-    if(avg_vector[0]<0):
-      HAL.setW(5)
-      HAL.setV(0.0)
-    else:
       HAL.setW(tan * 1.5)
       HAL.setV(avg_vector[0])
 ```
