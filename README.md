@@ -967,7 +967,6 @@ Same is done with the third vector, the average vector (or mean vector). Which c
 
 Check if the robot is close to the objective(2 units) and if so, set the current objective as 'reached'. It will later try to reach the next one.
 ```python3
-    tan = math.tan(avg_vector[1]/avg_vector[0])
     if (target_rel_x < 2 and target_rel_y < 2):
         currentTarget.setReached(True)
 ```        
