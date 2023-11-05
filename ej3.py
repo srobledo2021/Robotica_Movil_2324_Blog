@@ -4,6 +4,8 @@ import math
 import numpy as np
 # Enter sequential code!
 
+AngularValue= 1.5
+DistanceToObjective = 1.5
 
 def absolute2relative (x_abs, y_abs, robotx, roboty, robott):
 
@@ -56,13 +58,10 @@ while True:
     #----------------------------------------------
     # Obtener la posición absoluta del objetivo actual
     currentTarget = GUI.map.getNextTarget()
-    #GUI.map.targetx=currentTarget.getPose().x
-    #GUI.map.targety=currentTarget.getPose().y
     target_abs_x = currentTarget.getPose().x
     target_abs_y = currentTarget.getPose().y
     #----------------------------------------------
     absolute_target = target_abs_x, target_abs_y
-    #print(("target relative Position "),target_abs_x ,target_abs_y)
     #----------------------------------------------
     # Obtener la posición y orientación del robot
     robot_x = HAL.getPose3d().x
@@ -82,21 +81,14 @@ while True:
 
     tan = math.tan(avg_vector[1]/avg_vector[0])
 
-    if (target_rel_x < 1.5 and target_rel_y < 1.5):
+    if (target_rel_x < DistanceToObjective and target_rel_y < DistanceToObjective):
         currentTarget.setReached(True)
         
-
-    #if(avg_vector[0]<0):
-    #  HAL.setW(5)
-    #  HAL.setV(0.0)
-    #else:
-    #  HAL.setW(tan * 1.5)
-    #  HAL.setV(avg_vector[0])
-    HAL.setW(tan * 1.5)
+  
     HAL.setV(avg_vector[0])
+    HAL.setW(tan * AngularValue)
 
     GUI.showLocalTarget(relative_target)
-
     GUI.showForces(car_vect, obs_vect, avg_vector)
     GUI.showImage(image)
     
