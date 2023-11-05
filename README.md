@@ -988,6 +988,8 @@ After all of this, the code will work. However, it took a very long time to chec
 
 Then I came up with the idea of increasing the repulsion vector so that the sooner the car detects an 'anomaly' (and by anomaly, I mean an obstacle that pops out of nowhere), the better reaction it can have, allowing the car to take a sharp turn when necessary.
 
+We also decided to change the distance that the robot needs to be from the objective so that it will be able to change it when it is closer. First time it was 2 units, but we decided to make it even more precise, changing it into 1.5.
+
 In the end, after lots of changes, improvements and by trials and errors, these are the values that make the code work perfectly:
 
 ```python3
