@@ -47,9 +47,6 @@ def get_repulsive_force(parse_laser):
     laser_mean = np.mean(laser_vectorized, axis=0)
     return laser_mean
 
-def distance(x, y):
-    return math.sqrt(abs(x)*2 + abs(y)*2)
-
 while True:
     # Enter iterative code!
     image=HAL.getImage()
