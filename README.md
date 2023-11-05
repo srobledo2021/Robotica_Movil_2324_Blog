@@ -990,6 +990,8 @@ Then I came up with the idea of increasing the repulsion vector so that the soon
 
 We also decided to change the distance that the robot needs to be from the objective so that it will be able to change it when it is closer. First time it was 2 units, but we decided to make it even more precise, changing it into 1.5.
 
+Another little change was to declare the global values of the AngularValue= 1.5 that will be used to set the angular speed and the DistanceToObjective = 1.5 that we mentioned before.
+
 In the end, after lots of changes, improvements and by trials and errors, these are the values that make the code work perfectly:
 
 ```python3
