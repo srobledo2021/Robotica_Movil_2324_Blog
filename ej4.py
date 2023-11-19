@@ -2,47 +2,88 @@ from GUI import GUI
 from HAL import HAL
 from MAP import MAP
 import numpy as np
+from queue import Queue
 
 map_height= 400
 map_width= 400
 
 
+def bfs(grid, start, goal):
+    rows, cols = grid.shape
+    visited = set()
+    queue = Queue()
+    parent = {}
 
-def get_map_v24():
-  map_array = MAP.getMap('/RoboticsAcademy/exercises/static/exercises/global_navigation_newmanager/resources/images/cityLargenBin.png')
-  return map_array
+    queue.put(start)
+    visited.add(tuple(start))
+
+    while not queue.empty():
+        current = queue.get()
+
+        if current == goal:
+            break
+
+        for neighbor in get_neighbors(current, rows, cols):
+            if neighbor not in visited and grid[neighbor[0], neighbor[1]] == 0:  # Check if the neighbor is free
+                queue.put(neighbor)
+                visited.add(tuple(neighbor))
+                parent[neighbor] = current
+
+    path = reconstruct_path(start, goal, parent)
+    return path
+
+def get_neighbors(cell, rows, cols):
+    neighbors = []
+    directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]  # Up, Down, Left, Right
+
+    for dir in directions:
+        neighbor = (cell[0] + dir[0], cell[1] + dir[1])
+        if 0 <= neighbor[0] < rows and 0 <= neighbor[1] < cols:
+            neighbors.append(neighbor)
+
+    return neighbors
+    
+def reconstruct_path(start, goal, parent):
+    path = [goal]
+    current = goal
+
+    while current != start:
+        current = parent[current]
+        path.append(current)
+
+    path.reverse()
+    return path
+    
 
 while True:
+    #---------------------------------------
+    # get the clicked target
+    goal_pose  = GUI.getTargetPose()
+    #get coordinates for actual location in map
+    new_target_map = tuple(MAP.rowColumn(goal_pose))
+    #start pose
+    start_pose = HAL.getPose3d()
+    print(start_pose)
+    #---------------------------------------
+    map_url = '/RoboticsAcademy/exercises/static/exercises/global_navigation_newmanager/resources/images/cityLargenBin.png'
+    map_data = MAP.getMap(map_url)
+    #---------------------------------------
+    grid = (map_data > 127).astype(int)
+    # Convert world coordinates to map coordinates
+    start_cell = MAP.rowColumn(start_pose)
+    goal_cell = MAP.rowColumn(new_target_map)
     
-    new_target = GUI.getTargetPose()
-    new_target_map = tuple(MAP.rowColumn(new_target))
-      
-      
-    if new_target != target:
-      print(F"New target: {new_target}")
-      print(F"New target(map): {new_target}")
-      target = new_target
-      grid= compute_grid(map_array,new_target_map)
-      print("Cos grid:")
-      print(grid)
-      start_pos= get_car_pos()
-      print(F"Cost in start position:{grid[start_pos[1],start_pos[0]]})
-      
-      #path = get_path(grid_now,target_map)
-      (F"New target: (new_target)")
-    path = [MAP.rowColumn(GUI.getTargetPose()),MAP.rowColumn((HAL.getPose3d().x,HAL.getPose3d().y))]  
     
+    # Find path using BFS
+    path = bfs(grid, start_cell, goal_cell)
+    
+    # Display the path on the map
     GUI.showPath(path)
     
-    map_img = get_map_v24()
-    #0 obst snd 255 free
-    #obs con coste muy grande y esquinas con mas coste ej raiz d 2
-    
-    grid = np.zeros((map_height,map_width))
 
-    for i in range(map_width):
-        for j in range(map_height):
-            #if map_img[j][i] != 0:  # Solo dibujar si esta celda no es un obstáculo
-            grid[j][i] = 0.5*i + 0.5*j
+    #grid = (map_data > 127).astype(int)
+    #grid = np.zeros((map_height,map_width))
+    #GUI.showNumpy(grid)
     
-    GUI.showNumpy(grid)
+    #path = [MAP.rowColumn(goal_pose ),MAP.rowColumn((HAL.getPose3d().x,HAL.getPose3d().y))]  
+    #GUI.showPath(path)
