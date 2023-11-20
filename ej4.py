@@ -15,9 +15,11 @@ def gridToWorld(map_cell):
   
   return (world_x, world_y)
   
+def normalize_grid(grid):
+    max_grid = np.max(grid)
+    return np.clip(grid * 255 / max_grid, 0, 255).astype('uint8')
   
-  
-
+  # BFS function
 def bfs(grid, start, goal):
     rows, cols = grid.shape
     visited = set()
@@ -52,18 +54,18 @@ def get_neighbors(cell, rows, cols):
             neighbors.append(neighbor)
 
     return neighbors
-    
+
 def reconstruct_path(start, goal, parent):
     path = [goal]
     current = goal
 
     while current != start:
-        current = tuple(parent[tuple(current)])
+        current = parent[current]
         path.append(current)
 
     path.reverse()
     return path
-    
+
 
 while True:
     #---------------------------------------
@@ -80,7 +82,8 @@ while True:
     # Convert world coordinates to map coordinates
     start_cell = MAP.rowColumn(start_pose)
     goal_cell = MAP.rowColumn(new_target_map)
-    
+    print(start_cell)
+    print(goal_cell)
     
     # Find path using BFS
     #path = bfs(grid, start_cell, goal_cell)
@@ -88,11 +91,23 @@ while True:
     # Display the path on the map
     #GUI.showPath(path)
     
-    
+    # This is an example test grid
+    grid = np.zeros((map_height, map_width))
+    for i in range(map_width):
+      for j in range(map_height):
+        if map_data[j][i] != 0: # Only draw if this cell is not an obstacle
+            grid[j][i] = i
 
-    grid = (map_data > 127).astype("uint8")
-    #grid = np.zeros((map_height,map_width))
-    GUI.showNumpy(grid)
+    # Normalize the grid to show it
     
-    #path = [MAP.rowColumn(goal_pose ),MAP.rowColumn((HAL.getPose3d().x,HAL.getPose3d().y))]  
-    #GUI.showPath(path)
+    grid_normalized = normalize_grid(grid)
+    GUI.showNumpy(grid_normalized)
+    
+    
+    
+    
+    # Create a test path and show it
+    path = [MAP.rowColumn(goal_pose),MAP.rowColumn(start_pose)]
+    GUI.showPath(path)
+
+    
