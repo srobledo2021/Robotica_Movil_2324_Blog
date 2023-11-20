@@ -1,12 +1,22 @@
 from GUI import GUI
 from HAL import HAL
 from MAP import MAP
+import math
 import numpy as np
 from queue import Queue
 
 map_height= 400
 map_width= 400
 
+
+def gridToWorld(map_cell):
+  world_x = map_cell[1] * 500 / 400 -250
+  world_y = map_cell[0] * 500 / 400 -250
+  
+  return (world_x, world_y)
+  
+  
+  
 
 def bfs(grid, start, goal):
     rows, cols = grid.shape
@@ -48,7 +58,7 @@ def reconstruct_path(start, goal, parent):
     current = goal
 
     while current != start:
-        current = parent[current]
+        current = tuple(parent[tuple(current)])
         path.append(current)
 
     path.reverse()
@@ -62,28 +72,27 @@ while True:
     #get coordinates for actual location in map
     new_target_map = tuple(MAP.rowColumn(goal_pose))
     #start pose
-    start_pose = HAL.getPose3d()
-    print(start_pose)
+    start_pose =(HAL.getPose3d().x, HAL.getPose3d().y)
     #---------------------------------------
     map_url = '/RoboticsAcademy/exercises/static/exercises/global_navigation_newmanager/resources/images/cityLargenBin.png'
     map_data = MAP.getMap(map_url)
     #---------------------------------------
-    grid = (map_data > 127).astype(int)
     # Convert world coordinates to map coordinates
     start_cell = MAP.rowColumn(start_pose)
     goal_cell = MAP.rowColumn(new_target_map)
     
     
     # Find path using BFS
-    path = bfs(grid, start_cell, goal_cell)
+    #path = bfs(grid, start_cell, goal_cell)
     
     # Display the path on the map
-    GUI.showPath(path)
+    #GUI.showPath(path)
+    
     
 
-    #grid = (map_data > 127).astype(int)
+    grid = (map_data > 127).astype("uint8")
     #grid = np.zeros((map_height,map_width))
-    #GUI.showNumpy(grid)
+    GUI.showNumpy(grid)
     
     #path = [MAP.rowColumn(goal_pose ),MAP.rowColumn((HAL.getPose3d().x,HAL.getPose3d().y))]  
     #GUI.showPath(path)
