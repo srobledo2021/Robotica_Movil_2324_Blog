@@ -2,6 +2,7 @@ from GUI import GUI
 from HAL import HAL
 from MAP import MAP
 import math
+import heapq
 import numpy as np
 from queue import Queue
 
@@ -19,53 +20,45 @@ def normalize_grid(grid):
     max_grid = np.max(grid)
     return np.clip(grid * 255 / max_grid, 0, 255).astype('uint8')
   
-  # BFS function
 def bfs(grid, start, goal):
+    #400x400
     rows, cols = grid.shape
-    visited = set()
-    queue = Queue()
-    parent = {}
+    visited = np.zeros((rows, cols), dtype=bool)
+    parent = np.zeros((rows, cols, 2), dtype=int)
+    
+    start = tuple(start)
+    goal = tuple(goal)
+    
+    
+    pq = []  # Priority queue using heapq
+    heapq.heappush(pq, (0, start))  # Tuple: (priority, cell)
+    visited[start] = True
+    
+    while pq:
+        current_priority, current_cell = heapq.heappop(pq)
+        print(current_cell)
+        if current_cell == goal:
+            # Reconstruct path
+            path = []
+            while current_cell != start:
+                path.append(current_cell)
+                current_cell = tuple(parent[current_cell])
+            path.append(start)
+            print(path)
+            return path[::-1]
 
-    queue.put(start)
-    visited.add(tuple(start))
+        for i, j in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
+            next_cell = (current_cell[0] + i, current_cell[1] + j)
+            if 0 <= next_cell[0] < rows and 0 <= next_cell[1] < cols and not visited[next_cell[0]][next_cell[1]] and grid[next_cell[0]][next_cell[1]] == 0:
+                priority = np.linalg.norm(np.array(current_cell) - np.array(next_cell))  # Distance as priority
+                heapq.heappush(pq, (priority, next_cell))
+                visited[next_cell[0]][next_cell[1]] = True
+                parent[next_cell] = current_cell
+                
+                
 
-    while not queue.empty():
-        current = queue.get()
-
-        if current == goal:
-            break
-
-        for neighbor in get_neighbors(current, rows, cols):
-            if neighbor not in visited and grid[neighbor[0], neighbor[1]] == 0:  # Check if the neighbor is free
-                queue.put(neighbor)
-                visited.add(tuple(neighbor))
-                parent[neighbor] = current
-
-    path = reconstruct_path(start, goal, parent)
-    return path
-
-def get_neighbors(cell, rows, cols):
-    neighbors = []
-    directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]  # Up, Down, Left, Right
-
-    for dir in directions:
-        neighbor = (cell[0] + dir[0], cell[1] + dir[1])
-        if 0 <= neighbor[0] < rows and 0 <= neighbor[1] < cols:
-            neighbors.append(neighbor)
-
-    return neighbors
-
-def reconstruct_path(start, goal, parent):
-    path = [goal]
-    current = goal
-
-    while current != start:
-        current = parent[current]
-        path.append(current)
-
-    path.reverse()
-    return path
-
+    # If no path is found
+    return []
 
 while True:
     #---------------------------------------
@@ -82,14 +75,8 @@ while True:
     # Convert world coordinates to map coordinates
     start_cell = MAP.rowColumn(start_pose)
     goal_cell = MAP.rowColumn(new_target_map)
-    print(start_cell)
-    print(goal_cell)
     
-    # Find path using BFS
-    #path = bfs(grid, start_cell, goal_cell)
-    
-    # Display the path on the map
-    #GUI.showPath(path)
+  
     
     # This is an example test grid
     grid = np.zeros((map_height, map_width))
@@ -98,16 +85,15 @@ while True:
         if map_data[j][i] != 0: # Only draw if this cell is not an obstacle
             grid[j][i] = i
 
-    # Normalize the grid to show it
-    
-    grid_normalized = normalize_grid(grid)
-    GUI.showNumpy(grid_normalized)
     
     
-    
-    
+    #path = bfs(grid, start_cell, goal_cell)
+    print(path)
     # Create a test path and show it
     path = [MAP.rowColumn(goal_pose),MAP.rowColumn(start_pose)]
     GUI.showPath(path)
 
+    # Normalize the grid to show it
+    grid_normalized = normalize_grid(grid)
+    GUI.showNumpy(grid_normalized)
     
