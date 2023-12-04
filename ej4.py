@@ -146,49 +146,46 @@ def path_into_vectors(path):
     return vectors
     
     
-def attractive_force(x_rel, y_rel):
-    angulo_coche = HAL.getPose3d().yaw 
-    position = [x_rel, y_rel]
+def att_vect(x_rel, y_rel):
+    angle = HAL.getPose3d().yaw 
+    pos = [x_rel, y_rel]
 
-    vector_ang = gridToWorld(position)
+    vector_ang = gridToWorld(pos)
 
     # it makes atan2 to get the angle of the vector target
-    att_phase = math.atan2(vector_ang[0], vector_ang[1])
+    att = math.atan2(vector_ang[0], vector_ang[1])
     
-    #print(F"att_phase: {att_phase}")
-    if  att_phase < 0:
-      att_phase += 2 * math.pi
+    if  att < 0:
+      att += 2 * math.pi
     
-    if angulo_coche < 0:
-      angulo_coche = -angulo_coche 
+    if angle < 0:
+      angle = -angle 
     else:
-      angulo_coche = 2 * math.pi - angulo_coche
-    grados_coche = math.degrees(angulo_coche)
-    grados_target = (math.degrees(att_phase) - 90)
+      angle = 2 * math.pi - angle
+    grados_coche = math.degrees(angle)
+    grados_target = (math.degrees(att) - 90)
     while abs(grados_coche - grados_target) > 0.5:
       
-      angulo_coche = HAL.getPose3d().yaw 
+      angle = HAL.getPose3d().yaw 
       
-      if angulo_coche < 0:
-        angulo_coche = -angulo_coche 
+      if angle < 0:
+        angle = -angle 
       else:
-        angulo_coche = 2 * math.pi - angulo_coche
-      grados_coche = math.degrees(angulo_coche)
+        angle = 2 * math.pi - angle
+      grados_coche = math.degrees(angle)
 
       HAL.setW(abs(grados_coche - grados_target)*0.02)
       print(abs(grados_coche - grados_target))
     HAL.setW(0)
     return  
+
 def move_to_target(x_rel, y_rel):
-  car_position = HAL.getPose3d()
-  position = [car_position.x, car_position.y]
-  car_position_map = tuple(MAP.rowColumn(position))
   while (True) :
-    car_position = HAL.getPose3d()
-    position = [car_position.x, car_position.y]
-    car_position_map = tuple(MAP.rowColumn(position))
-    dist_x = abs(x_rel - car_position_map[0])
-    dist_y = abs(y_rel - car_position_map[1])
+    car_pos = HAL.getPose3d()
+    pos = [car_pos.x, car_pos.y]
+    car_pos_map = tuple(MAP.rowColumn(pos))
+    dist_x = abs(x_rel - car_pos_map[0])
+    dist_y = abs(y_rel - car_pos_map[1])
     manhattan_dist = math.sqrt((dist_x**2) + (dist_y**2))
     print(manhattan_dist)
     if ((manhattan_dist) > 1):
@@ -200,24 +197,6 @@ def move_to_target(x_rel, y_rel):
 
     
   return
-
-def move_robot_along_path(path):
-    puntos_inicio_fin = []
-    punto_inicio = path[0]
-
-    for coord in path[1:]:
-        # Verificar si la coordenada actual comparte el mismo valor en uno de los ejes con la coordenada de inicio
-        if coord[0] == punto_inicio[0] or coord[1] == punto_inicio[1]:
-            # Actualizar la coordenada de fin
-            punto_fin = coord
-        else:
-            # Si no comparte el mismo valor en uno de los ejes, guardar el inicio y fin del vector actual
-            puntos_inicio_fin.append((punto_inicio, punto_fin))
-            # Actualizar la coordenada de inicio para el próximo vector
-            punto_inicio = coord
-
-    # Agregar el último inicio y fin del vector
-    puntos_inicio_fin.append((punto_inicio, punto_fin))
 
 #---------------------------------------
 map_url = '/RoboticsAcademy/exercises/static/exercises/global_navigation_newmanager/resources/images/cityLargenBin.png'
@@ -262,22 +241,16 @@ while True:
     #--------------------------------------
     
     for i in range(len(result_vector)):
-      sleep(10)
+      sleep(15)
       print("Result Vector")
       print(result_vector[i][0])
       print(result_vector[i][1])
       #spin
       print("SPIN")
-      attractive_force(result_vector[i][0], result_vector[i][1])
+      att_vect(result_vector[i][0], result_vector[i][1])
       print("FINISHED SPIN")
       #move
       print("MOVE")
       move_to_target(result_vector[i][0], result_vector[i][1])
       print("FINISHED MOVEMENT")
       
-      #end of path
-      if i == len(result_vector) - 1:
-        HAL.setV(0)
-        HAL.setW(0)
-        print("Own pos")
-        break
