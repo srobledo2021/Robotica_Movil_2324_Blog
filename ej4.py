@@ -227,21 +227,22 @@ grid = np.full(map_data.shape, 255)
 
 start_pos = get_car_pos()
 current_target = None
-while True:
-    #---------------------------------------
-    # get the clicked target
-    goal_pose  = GUI.getTargetPose()
-    #get coordinates for actual location in map
-    new_target_map = tuple(MAP.rowColumn(goal_pose))
-    #start pose
-    start_pose =(HAL.getPose3d().x, HAL.getPose3d().y)
-    #---------------------------------------
-    # Convert world coordinates to map coordinates
-    start_cell = MAP.rowColumn(start_pose)
-    goal_cell = MAP.rowColumn(new_target_map)
+#---------------------------------------
+# get the clicked target
+goal_pose  = GUI.getTargetPose()
+#get coordinates for actual location in map
+new_target_map = tuple(MAP.rowColumn(goal_pose))
+#start pose
+start_pose =(HAL.getPose3d().x, HAL.getPose3d().y)
+#---------------------------------------
+# Convert world coordinates to map coordinates
+start_cell = MAP.rowColumn(start_pose)
+goal_cell = MAP.rowColumn(new_target_map)
     
  
 
+while True:
+    
     if goal_pose != current_target:
         current_target = goal_pose
     grid = bfs_search(map_data, new_target_map, start_pos)
