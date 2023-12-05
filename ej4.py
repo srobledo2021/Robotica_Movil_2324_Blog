@@ -211,7 +211,6 @@ def check_reached_goal(result_path):
 map_url = '/RoboticsAcademy/exercises/static/exercises/global_navigation_newmanager/resources/images/cityLargenBin.png'
 map_data = MAP.getMap(map_url)
 grid = np.full(map_data.shape, 255)
-current_target = None
 #---------------------------------------
 #start pose
 start_pose =HAL.getPose3d()
