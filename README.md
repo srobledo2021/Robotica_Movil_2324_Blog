@@ -1047,8 +1047,32 @@ array = MAP.getMap('/RoboticsAcademy/exercises/static/exercises/global_navigatio
 ```
 - MAP.rowColumn(vector) - returns the index in map coordinates corresponding to the vector in world coordinates passed as parameter
 
-
-
 ### STEPS 4
 
+Before iterating, we need to get the map from the Unibotics files:
+```python
+map_url = '/RoboticsAcademy/exercises/static/exercises/global_navigation_newmanager/resources/images/cityLargenBin.png'
+map_data = MAP.getMap(map_url)
+```
+Define the grid:
+```
+grid = np.full(map_data.shape, 255)
+```
+Then we need to get the position where the car is placed at the very beginning and get the target that has to be reached.
+
+The way this is implemented is:
+```python3
+#---------------------------------------
+# get the clicked target
+goal_pose  = GUI.getTargetPose()
+#get coordinates for actual location in map
+new_target_map = tuple(MAP.rowColumn(goal_pose))
+#start pose
+start_pose =(HAL.getPose3d().x, HAL.getPose3d().y)
+#---------------------------------------
+# Convert world coordinates to map coordinates
+start_cell = MAP.rowColumn(start_pose)
+goal_cell = MAP.rowColumn(new_target_map)
+```
+So that now we get the starting position and the goal position with the actual map coordinates.
 # Video 4
