@@ -1049,7 +1049,7 @@ array = MAP.getMap('/RoboticsAcademy/exercises/static/exercises/global_navigatio
 
 ### STEPS 4
 
-Before iterating, we need to get the map from the Unibotics files:
+Before iterating in the while loop, we need to get the map from the Unibotics files:
 ```python
 map_url = '/RoboticsAcademy/exercises/static/exercises/global_navigation_newmanager/resources/images/cityLargenBin.png'
 map_data = MAP.getMap(map_url)
@@ -1107,6 +1107,13 @@ def normalize_grid(grid):
     max_grid = np.max(grid)
     return np.clip(grid * 255 / max_grid, 0, 255).astype('uint8')
 ```
+After all of that the map should look like this(dependind on the goal selected):
+
+![image](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/73acdc10-3f46-4fc8-a67a-a2ab39076134)
+
+
+----------------------------------------------------------------------------------------
+
 
 Now the strategy that we are using is to simplify the whole path and split it into little vectors so that it is much easier to navegate.
 The way we are implementig it is by doing this:
@@ -1127,10 +1134,14 @@ while True:
             orientate(result_path[i][0], result_path[i][1])
             move_forward(result_path[i][0], result_path[i][1])
             #Reach goal
-            if i == len(result_path) - 1:
-                HAL.setV(0)
-                HAL.setW(0)
+            if (check_reached_goal(result_path) == True):
                 break
 ```
+The way 'orientate' is being done is by gettting to know the yaw of the car so that comparing it afterwards with the angle of the goal coordinate, we can iterate to reduce the error (the difference) and spin the car until it faces the coordinate we are searching for.
+
+The way 'move_forward' is being done is by comparing the actual position with the actual target coordinate and move in a straight line until the goal is reached.
+
+The fuction 'check_reached_goal' simply checks if the coordinate we are in is the goal selected on the map or not. And if so, it stops iterating.
+
 ### Video 4
 [LINK]()
