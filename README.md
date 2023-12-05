@@ -15,6 +15,11 @@
   - [API](#API-3)
   - [Steps](#Steps-3)
   - [Video](#Video)
+- [Exercise 4: Obstacle Avoidance](#Global-Navigation)
+  - [Introduction](#Introduction-4)
+  - [API](#API-4)
+  - [Steps](#Steps-4)
+  - [Video](#Video-4)
 ----------------------------------------------------------------------------------
 # Vacuum cleaner
 
@@ -1005,3 +1010,16 @@ In the end, after lots of changes, improvements and by trials and errors, these 
 
 # Video
 [Video testing the code](https://youtu.be/Oz9GYynMgoA)
+
+
+--------------------------------------------------------------------
+
+# Global Navigation
+
+
+### Introduction 4
+The goal of this exercise is to perform a PID reactive control capable of following the line painted on the racing circuit.
+
+### API 4
+
+# Video 4
