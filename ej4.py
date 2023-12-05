@@ -11,6 +11,9 @@ map_height= 400
 map_width= 400
 
 DISTANCE = 1
+KSPEED = 0.02
+ANG_DIFF = 0.1
+K_MANHATTAN=0.5
 
 def gridToWorld(map_cell):
   world_x = map_cell[1] * 500 / map_height -250
@@ -24,20 +27,28 @@ def normalize_grid(grid):
   
 
 def get_path_coords(grid, start_pos):
-    path = []
     current_coord = start_pos
+    path = []
     while (grid[current_coord[1], current_coord[0]] != 0):
         path.append(current_coord)
 
         neighbors = [
-            (current_coord[0], current_coord[1] - 1),  # U
-            (current_coord[0], current_coord[1] + 1),  # D
-            (current_coord[0] - 1, current_coord[1]),  # L
-            (current_coord[0] + 1, current_coord[1]),  # R
-            (current_coord[0] - 1, current_coord[1] - 1),  # UL
-            (current_coord[0] - 1, current_coord[1] + 1),  # DL
-            (current_coord[0] + 1, current_coord[1] - 1),  # UR
-            (current_coord[0] + 1, current_coord[1] + 1),  # DR
+            # U
+            (current_coord[0], current_coord[1] - 1),
+            # D
+            (current_coord[0], current_coord[1] + 1), 
+            # L
+            (current_coord[0] - 1, current_coord[1]), 
+            # R
+            (current_coord[0] + 1, current_coord[1]),
+            # UL
+            (current_coord[0] - 1, current_coord[1] - 1),
+            # DL
+            (current_coord[0] - 1, current_coord[1] + 1), 
+            # UR
+            (current_coord[0] + 1, current_coord[1] - 1), 
+            # DR
+            (current_coord[0] + 1, current_coord[1] + 1),  
         ]
 
         next_pos = None
@@ -51,9 +62,6 @@ def get_path_coords(grid, start_pos):
 
         if next_pos is not None:
             current_coord = next_pos
-        #else:
-        #    print("Error: Could not find path")
-        #    break
 
     path.append(current_coord)
     return path
@@ -120,7 +128,7 @@ def orientate(x_rel, y_rel):
     goal_ang = (math.degrees(atan_val) - 90)
 
     #difference in angles (face objective)
-    while abs(car_angl - goal_ang) > 0.033:
+    while abs(car_angl - goal_ang) > ANG_DIFF:
       car_yaw = HAL.getPose3d().yaw 
       if car_yaw < 0:
         car_yaw = -car_yaw 
@@ -128,20 +136,17 @@ def orientate(x_rel, y_rel):
         car_yaw = 2 * math.pi - car_yaw
       car_angl = math.degrees(car_yaw)
 
-      HAL.setW((car_angl - goal_ang)*0.015)
+      HAL.setW((car_angl - goal_ang)*KSPEED)
     HAL.setW(0)
     return  
 
 
 def move_forward(x_rel, y_rel):
-  while (True) :
-    pos = [HAL.getPose3d().x, HAL.getPose3d().y]
-    car_pos = tuple(MAP.rowColumn(pos))
-    xdist = abs(x_rel - car_pos[0])
-    ydist = abs(y_rel - car_pos[1])
-    manhattan_dist = math.sqrt((xdist**2) + (ydist**2))
+  while True :
+    car_pos = tuple(MAP.rowColumn([HAL.getPose3d().x, HAL.getPose3d().y]))
+    manhattan_dist = math.sqrt((abs(x_rel - car_pos[0])**2) + (abs(y_rel - car_pos[1])**2))
     if ((manhattan_dist) > DISTANCE):
-      HAL.setV(manhattan_dist * 0.4)
+      HAL.setV(manhattan_dist * K_MANHATTAN)
     else:
       HAL.setV(0)
       break
@@ -174,14 +179,22 @@ def bfs_search(map_array, target_map, start_pos):
 
         # Get neighbors and insert them
         neighbors = [
-            (current_node[0], current_node[1] - 1),  # U
-            (current_node[0], current_node[1] + 1),  # D
-            (current_node[0] - 1, current_node[1]),  # L
-            (current_node[0] + 1, current_node[1]),  # R
-            (current_node[0] - 1, current_node[1] - 1),  # UL
-            (current_node[0] - 1, current_node[1] + 1),  # DL
-            (current_node[0] + 1, current_node[1] - 1),  # UR
-            (current_node[0] + 1, current_node[1] + 1),  # DR
+            # U
+            (current_node[0], current_node[1] - 1),
+            # D
+            (current_node[0], current_node[1] + 1), 
+            # L
+            (current_node[0] - 1, current_node[1]), 
+            # R
+            (current_node[0] + 1, current_node[1]),
+            # UL
+            (current_node[0] - 1, current_node[1] - 1),
+            # DL
+            (current_node[0] - 1, current_node[1] + 1), 
+            # UR
+            (current_node[0] + 1, current_node[1] - 1), 
+            # DR
+            (current_node[0] + 1, current_node[1] + 1),  
         ]
 
         for neighbor in neighbors:
