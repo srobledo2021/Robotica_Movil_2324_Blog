@@ -1143,5 +1143,10 @@ The way 'move_forward' is being done is by comparing the actual position with th
 
 The fuction 'check_reached_goal' simply checks if the coordinate we are in is the goal selected on the map or not. And if so, it stops iterating.
 
+### Overall comments
+
+Although the way it behaves can be seen in the video, we get a little issue which is that walls need to have different costs so that the car does not bump into them. 
+
+
 ### Video 4
 [LINK]()
