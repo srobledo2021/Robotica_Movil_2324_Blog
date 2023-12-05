@@ -5,7 +5,7 @@ import math
 import heapq
 import numpy as np
 import queue
-from time import sleep
+import time
 
 map_height= 400
 map_width= 400
@@ -29,83 +29,77 @@ def get_car_pos():
   return car_position_map
 
 def bfs_search(map_array, target_map, start_pos):
-    priority_queue = queue.PriorityQueue()
-    visited = set()
-    visited.add(target_map)
 
-    # Step 1: Insert Target Node into the priority queue
+    priority_queue = queue.PriorityQueue()
+    visited_positions = set()
+    visited_positions.add(target_map)
+
+    #Insert Target Node into the priority queue
     priority_queue.put((0, target_map))
 
     while not priority_queue.empty(): 
-        # Step 2: Pop node from the priority queue
+        #Pop node from priority queue
         cost, current = priority_queue.get()
-        # Step 3: Check if the current node is the start node
+        #Atart node End
         if current == start_pos:
             break
 
-        # Step 4: Check for obstacles
+        # Whenever you find an obstacle
         if map_array[current[1], current[0]] == 0:  
-            # 0 for obstacles
+            # obstacle value = 0
             continue
 
-        # Update the grid with the current cost
+        # Assign weight to neighbors of c if previously unassigned
         grid[current[1], current[0]] = cost
 
-        # Step 5: Assign weight to neighbors
 
-        # Get neighbors
+        # Get neighbors and insert them
         neighbors = [
-            (current[0] - 1, current[1]),  # L
-            (current[0] + 1, current[1]),  # R
             (current[0], current[1] - 1),  # U
             (current[0], current[1] + 1),  # D
+            (current[0] - 1, current[1]),  # L
+            (current[0] + 1, current[1]),  # R
             (current[0] - 1, current[1] - 1),  # UL
-            (current[0] + 1, current[1] - 1),  # UR
             (current[0] - 1, current[1] + 1),  # DL
+            (current[0] + 1, current[1] - 1),  # UR
             (current[0] + 1, current[1] + 1),  # DR
         ]
 
-        # Compute the cost of each neighbor
         for neighbor in neighbors:
-            # Check if the neighbor is out of bounds
             if (neighbor[0] < 0 or neighbor[0] >= grid.shape[1] or neighbor[1] < 0 or neighbor[1] >= grid.shape[0]):
                 continue
 
-            # Check if the neighbor has been visited
-            if neighbor in visited:
+            # Already visited neighbor?
+            if neighbor in visited_positions:
                 continue
 
-            # Update the grid with the current cost for the neighbor
+            # Grid with costs
             if neighbor[0] == current[0] or neighbor[1] == current[1]:
                 grid[neighbor[1], neighbor[0]] = cost + 1
             else:
                 grid[neighbor[1], neighbor[0]] = cost + math.sqrt(2)
 
-            # Insert neighbors into the priority queue
+            # Update priority queue
             priority_queue.put((grid[neighbor[1], neighbor[0]], neighbor))
-            # Mark the neighbor as visited
-            visited.add(neighbor)
-    
-
-
+            # Mark as visited
+            visited_positions.add(neighbor)
     return grid
 
-def get_path_coords(grid, goal_pos, start_pos):
+def get_path_coords(grid, start_pos):
     path = []
-    current_pos = start_pos
-    while (grid[current_pos[1], current_pos[0]] != 0):
-        path.append(current_pos)
+    current = start_pos
+    while (grid[current[1], current[0]] != 0):
+        path.append(current)
 
-        # Obtener vecinos
         neighbors = [
-            (current_pos[0] - 1, current_pos[1]),  # L
-            (current_pos[0], current_pos[1] - 1),  # U
-            (current_pos[0] + 1, current_pos[1]),  # R
-            (current_pos[0], current_pos[1] + 1),  # D
-            (current_pos[0] - 1, current_pos[1] - 1),  # UL
-            (current_pos[0] + 1, current_pos[1] - 1),  # UR
-            (current_pos[0] - 1, current_pos[1] + 1),  # DL
-            (current_pos[0] + 1, current_pos[1] + 1),  # DR
+            (current[0], current[1] - 1),  # U
+            (current[0], current[1] + 1),  # D
+            (current[0] - 1, current[1]),  # L
+            (current[0] + 1, current[1]),  # R
+            (current[0] - 1, current[1] - 1),  # UL
+            (current[0] - 1, current[1] + 1),  # DL
+            (current[0] + 1, current[1] - 1),  # UR
+            (current[0] + 1, current[1] + 1),  # DR
         ]
 
         min_cost = float("inf")
@@ -118,85 +112,107 @@ def get_path_coords(grid, goal_pos, start_pos):
 
 
         if next_pos is not None:
-            current_pos = next_pos
+            current = next_pos
         else:
             print("Error: Could not find path")
             break
 
-    path.append(current_pos)
+    path.append(current)
     return path
 
 
-def path_into_vectors(path):
-    vectors = []
+def path_into_vectors(full_path,goal):
 
-    current_vector = [path[0]]
-    for i in range(1, len(path)):
-        current_point = path[i]
-        previous_point = path[i-1]
-        # Condición para el cambio en el eje x
-        if (current_point[0] == previous_point[0] or current_point[1] == previous_point[1]):
+    result_vectors  = []
+    current_vector = [full_path[0]]
+    for i in range(1, len(full_path)):
+      if i == len(full_path) - 1:
+          next_grid = full_path[i]
+      else:
+        next_grid = full_path[i + 1]
+        grid_on = full_path[i]
+        prev_grid = full_path[i - 1]
+
+        # Upwards vector
+        if grid_on[1] == prev_grid[1] and grid_on[1] != next_grid[1]:
+            current_vector.append(grid_on)
             continue
-        if current_point[0] != previous_point[0]:
-            vectors.append(current_vector)
-            current_vector = [current_point]
+
+        # Right vector
+        if grid_on[0] == prev_grid[0] and grid_on[0] != next_grid[0]:
+            current_vector.append(grid_on)
+            continue
+        
+        
+        # Condición para el cambio en la diagonal hacia arriba y derecha
+        if (grid_on[0] + grid_on[1] == prev_grid[0] + prev_grid[1]) and \
+                (grid_on[0] + grid_on[1] != next_grid[0] + next_grid[1]):
+            current_vector.append(grid_on)
+            continue
+
+        # Condición para el cambio en la diagonal hacia arriba y izquierda
+        if (grid_on[0] - grid_on[1] == prev_grid[0] - prev_grid[1]) and \
+                (grid_on[0] - grid_on[1] != next_grid[0] - next_grid[1]):
+            current_vector.append(grid_on)
+            continue
+
         else:
             continue
-    vectors.append(current_vector)
-    return vectors
+    result_vectors.append(current_vector)
+    result_vectors.append([goal])
+    return result_vectors
+
     
-    
-def att_vect(x_rel, y_rel):
-    angle = HAL.getPose3d().yaw 
+def orientate(x_rel, y_rel):
+
     pos = [x_rel, y_rel]
+    angle = gridToWorld(pos)
+    car_yaw = HAL.getPose3d().yaw 
 
-    vector_ang = gridToWorld(pos)
-
-    # it makes atan2 to get the angle of the vector target
-    att = math.atan2(vector_ang[0], vector_ang[1])
+    atan_val = math.atan2(angle[0] - HAL.getPose3d().x , angle[1]- HAL.getPose3d().y)
+    if  atan_val <= 0:
+      atan_val += 2 * math.pi
     
-    if  att < 0:
-      att += 2 * math.pi
-    
-    if angle < 0:
-      angle = -angle 
+    if car_yaw < 0:
+      car_yaw = -car_yaw 
     else:
-      angle = 2 * math.pi - angle
-    grados_coche = math.degrees(angle)
-    grados_target = (math.degrees(att) - 90)
-    while abs(grados_coche - grados_target) > 0.5:
-      
-      angle = HAL.getPose3d().yaw 
-      
-      if angle < 0:
-        angle = -angle 
-      else:
-        angle = 2 * math.pi - angle
-      grados_coche = math.degrees(angle)
+      car_yaw = 2 * math.pi - car_yaw
+    car_angl = math.degrees(car_yaw)
+    goal_ang = (math.degrees(atan_val) - 90)
 
-      HAL.setW(abs(grados_coche - grados_target)*0.02)
-      print(abs(grados_coche - grados_target))
+    while abs(car_angl - goal_ang) > 0.033:
+      car_yaw = HAL.getPose3d().yaw 
+      if car_yaw < 0:
+        car_yaw = -car_yaw 
+      else:
+        car_yaw = 2 * math.pi - car_yaw
+      car_angl = math.degrees(car_yaw)
+
+      HAL.setW((car_angl - goal_ang)*0.015)
     HAL.setW(0)
     return  
 
-def move_to_target(x_rel, y_rel):
+
+def move_forward(x_rel, y_rel):
   while (True) :
-    car_pos = HAL.getPose3d()
-    pos = [car_pos.x, car_pos.y]
-    car_pos_map = tuple(MAP.rowColumn(pos))
-    dist_x = abs(x_rel - car_pos_map[0])
-    dist_y = abs(y_rel - car_pos_map[1])
-    manhattan_dist = math.sqrt((dist_x**2) + (dist_y**2))
-    print(manhattan_dist)
+    pos = [HAL.getPose3d().x, HAL.getPose3d().y]
+    car_pos = tuple(MAP.rowColumn(pos))
+    xdist = abs(x_rel - car_pos[0])
+    ydist = abs(y_rel - car_pos[1])
+    manhattan_dist = math.sqrt((xdist**2) + (ydist**2))
     if ((manhattan_dist) > 1):
       HAL.setV(manhattan_dist * 0.4)
     else:
-      print(" a menos de 1")
       HAL.setV(0)
       break
 
-    
   return
+
+def check_reached_goal(result_path):
+    if i == len(result_path) - 1:
+        HAL.setV(0)
+        HAL.setW(0)
+        return True
 
 #---------------------------------------
 map_url = '/RoboticsAcademy/exercises/static/exercises/global_navigation_newmanager/resources/images/cityLargenBin.png'
@@ -222,35 +238,28 @@ goal_cell = MAP.rowColumn(new_target_map)
 
 while True:
     
-    if goal_pose != current_target:
-        current_target = goal_pose
+    #get map with costs using BFS search algorythm
     grid = bfs_search(map_data, new_target_map, start_pos)
-    if grid[start_pos[1], start_pos[0]] == 0:
-      print("starting in an obstacle")
-    path = get_path_coords(grid, new_target_map, start_pos)
+    #get the path
+    path = get_path_coords(grid, start_pos)
     # Normalize the grid to show it
     grid_normalized = normalize_grid(grid)
     GUI.showNumpy(grid_normalized)
+    #show path on display
     path_to_show = [[x, y] for x, y in path]
     GUI.showPath(path_to_show)
     #--------------------------------------
-    resulting_vectors = path_into_vectors(path)
+    #split path into vectors
+    resulting_vectors = path_into_vectors(path,new_target_map)
     vectors_from_path = [[x, y] for coord in resulting_vectors for x, y in coord]
-    result_vector = vectors_from_path[1:]
-    print("REsult vector", result_vector)
+    result_path = vectors_from_path[1:]
     #--------------------------------------
-    
-    for i in range(len(result_vector)):
-      sleep(15)
-      print("Result Vector")
-      print(result_vector[i][0])
-      print(result_vector[i][1])
-      #spin
-      print("SPIN")
-      att_vect(result_vector[i][0], result_vector[i][1])
-      print("FINISHED SPIN")
-      #move
-      print("MOVE")
-      move_to_target(result_vector[i][0], result_vector[i][1])
-      print("FINISHED MOVEMENT")
-      
+    while True:
+        for i in range(len(result_path)):
+            orientate(result_path[i][0], result_path[i][1])
+            move_forward(result_path[i][0], result_path[i][1])
+            #Reach goal
+            if (check_reached_goal(result_path) == True):
+                break
+        
+        
