@@ -1018,8 +1018,20 @@ In the end, after lots of changes, improvements and by trials and errors, these 
 
 
 ### Introduction 4
-The goal of this exercise is to perform a PID reactive control capable of following the line painted on the racing circuit.
+         
+
+Global Navigation using TeleTaxi
+TOC Global Navigation
+
+
+The objective of this practice is to implement the logic of a Gradient Path Planning (GPP) algorithm. Global navigation through GPP, consists of:
+Selected a destination, the GPP algorithm is responsible for finding the shortest path to it, avoiding, in the case of this practice, everything that is not road.
+
+Once the path has been selected, the logic necessary to follow this path and reach the objective must be implemented in the robot.
+
 
 ### API 4
+
+### STEPS 4
 
 # Video 4
