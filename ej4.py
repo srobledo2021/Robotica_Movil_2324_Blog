@@ -10,11 +10,10 @@ import time
 map_height= 400
 map_width= 400
 
-obstacles = []
 
 def gridToWorld(map_cell):
-  world_x = map_cell[1] * 500 / 400 -250
-  world_y = map_cell[0] * 500 / 400 -250
+  world_x = map_cell[1] * 500 / map_height -250
+  world_y = map_cell[0] * 500 / map_width -250
   
   return (world_x, world_y)
   
@@ -22,12 +21,6 @@ def normalize_grid(grid):
     max_grid = np.max(grid)
     return np.clip(grid * 255 / max_grid, 0, 255).astype('uint8')
   
-def get_car_pos():
-  car_position = HAL.getPose3d()
-  position = [car_position.x, car_position.y]
-  car_position_map = tuple(MAP.rowColumn(position))
-  return car_position_map
-
 def bfs_search(map_array, target_map, start_pos):
 
     priority_queue = queue.PriorityQueue()
@@ -144,13 +137,13 @@ def path_into_vectors(full_path,goal):
             continue
         
         
-        # Condición para el cambio en la diagonal hacia arriba y derecha
+        #UP-RIGHT
         if (grid_on[0] + grid_on[1] == prev_grid[0] + prev_grid[1]) and \
                 (grid_on[0] + grid_on[1] != next_grid[0] + next_grid[1]):
             current_vector.append(grid_on)
             continue
 
-        # Condición para el cambio en la diagonal hacia arriba y izquierda
+        # UP-Left
         if (grid_on[0] - grid_on[1] == prev_grid[0] - prev_grid[1]) and \
                 (grid_on[0] - grid_on[1] != next_grid[0] - next_grid[1]):
             current_vector.append(grid_on)
@@ -217,31 +210,28 @@ def check_reached_goal(result_path):
 #---------------------------------------
 map_url = '/RoboticsAcademy/exercises/static/exercises/global_navigation_newmanager/resources/images/cityLargenBin.png'
 map_data = MAP.getMap(map_url)
-
 grid = np.full(map_data.shape, 255)
-
-start_pos = get_car_pos()
 current_target = None
 #---------------------------------------
+#start pose
+start_pose =HAL.getPose3d()
+pos=[start_pose.x, start_pose.y]
+#---------------------------------------
+# Convert world coordinates to map coordinates
+start_cell = tuple(MAP.rowColumn(pos))
 # get the clicked target
 goal_pose  = GUI.getTargetPose()
 #get coordinates for actual location in map
 new_target_map = tuple(MAP.rowColumn(goal_pose))
-#start pose
-start_pose =(HAL.getPose3d().x, HAL.getPose3d().y)
-#---------------------------------------
-# Convert world coordinates to map coordinates
-start_cell = MAP.rowColumn(start_pose)
-goal_cell = MAP.rowColumn(new_target_map)
-    
+
  
 
 while True:
     
     #get map with costs using BFS search algorythm
-    grid = bfs_search(map_data, new_target_map, start_pos)
+    grid = bfs_search(map_data, new_target_map, start_cell)
     #get the path
-    path = get_path_coords(grid, start_pos)
+    path = get_path_coords(grid, start_cell)
     # Normalize the grid to show it
     grid_normalized = normalize_grid(grid)
     GUI.showNumpy(grid_normalized)
@@ -261,5 +251,4 @@ while True:
             #Reach goal
             if (check_reached_goal(result_path) == True):
                 break
-        
-        
+                
