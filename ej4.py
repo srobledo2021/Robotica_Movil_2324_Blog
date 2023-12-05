@@ -218,7 +218,7 @@ def bfs_search(map_array, target_map, start_pos):
     return grid
 
 
-def check_reached_goal(result_path):
+def check_reached_goal(result_path,i):
     if i == len(result_path) - 1:
         HAL.setV(0)
         HAL.setW(0)
@@ -264,6 +264,6 @@ while True:
             orientate(result_path[i][0], result_path[i][1])
             move_forward(result_path[i][0], result_path[i][1])
             #Reach goal
-            if (check_reached_goal(result_path) == True):
+            if (check_reached_goal(result_path,i) == True):
                 break
                 
