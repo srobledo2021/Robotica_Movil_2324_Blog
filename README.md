@@ -1042,9 +1042,9 @@ Once the path has been selected, the logic necessary to follow this path and rea
 - GUI.showPath(array) - shows a path on the map. The parameter should be a 2D array containing each of the points of the path
 - GUI.getTargetPose() - returns x,y coordinates of chosen destionation in the world. Destination is set by clicking on the map image
 - MAP.getMap(url) - - Returns a numpy array with the image data in grayscale as a 2 dimensional array. The URL of the Global Navigation map is ‘/RoboticsAcademy/exercises/static/exercises/global_navigation_newmanager/resources/images/cityLargenBin.png’, so the instruction to get the map is
-
-- array = MAP.getMap('/RoboticsAcademy/exercises/static/exercises/global_navigation_newmanager/resources/images/cityLargenBin.png')
-
+```
+array = MAP.getMap('/RoboticsAcademy/exercises/static/exercises/global_navigation_newmanager/resources/images/cityLargenBin.png')
+```
 - MAP.rowColumn(vector) - returns the index in map coordinates corresponding to the vector in world coordinates passed as parameter
 
 
