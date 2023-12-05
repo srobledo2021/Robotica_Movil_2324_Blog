@@ -1074,5 +1074,63 @@ start_pose =(HAL.getPose3d().x, HAL.getPose3d().y)
 start_cell = MAP.rowColumn(start_pose)
 goal_cell = MAP.rowColumn(new_target_map)
 ```
-So that now we get the starting position and the goal position with the actual map coordinates.
-# Video 4
+As so, we get the starting position and the goal position with the actual map coordinates.
+
+In our main loop, we are following this algorythm to generate the grid with actual values, then get the best path and after that, move to the target. The way it is implemented is as so:
+
+Inside a 'while' loop, first of all we implement a BFS algorythm to get the grid and assign costs to its cells: 
+```python3
+grid = bfs_search(map_data, new_target_map, start_pos)
+```
+This are the steps we are following to implement the algorythm(all defined in the bfs_search function):
+Step1: insert Target Node into priority queue
+Step2: c = pop node from priority queue
+Step3: if c == start node End
+Step4: if c == obstacle Save to another list and goto Step2
+Step5: assign weight to neighbors of c if previously unassigned
+Step6: insert neighbors of c to priority queue
+Step7: goto Step2
+
+
+After that, we need to get the path with the lowest cost from the actual position to the goal. We will implement this in our function:
+```python3
+path = get_path_coords(grid, start_pos)
+```
+Then we normalize the grid using 'normalize_grid' function and show it on display afterwards:
+```python3
+grid_normalized = normalize_grid(grid)
+GUI.showNumpy(grid_normalized)
+```
+This is how we get the grid normalized:
+```python
+def normalize_grid(grid):
+    max_grid = np.max(grid)
+    return np.clip(grid * 255 / max_grid, 0, 255).astype('uint8')
+```
+
+Now the strategy that we are using is to simplify the whole path and split it into little vectors so that it is much easier to navegate.
+The way we are implementig it is by doing this:
+```python
+resulting_vectors = path_into_vectors(path,new_target_map)
+vectors_from_path = [[x, y] for coord in resulting_vectors for x, y in coord]
+result_path = vectors_from_path[1:]
+```
+The function 'path_into_vectors' gets the whole path that we already made before and checks for similar coordinates so that instead off having a straight line with 30 coordinates, it has a vector with the origin and end of it. 
+
+By doing this, we are able to simplify the whole path.
+
+----------------------------------------------------------
+Now it is time to navigate, for that we are using one easy algorythm which is rotating (to search for the next coordinate) and then move until the car reaches it. We are doing it this way:
+```python3
+while True:
+        for i in range(len(result_path)):
+            orientate(result_path[i][0], result_path[i][1])
+            move_forward(result_path[i][0], result_path[i][1])
+            #Reach goal
+            if i == len(result_path) - 1:
+                HAL.setV(0)
+                HAL.setW(0)
+                break
+```
+### Video 4
+[LINK]()
