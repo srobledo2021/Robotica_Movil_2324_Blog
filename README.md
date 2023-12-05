@@ -1145,8 +1145,8 @@ The fuction 'check_reached_goal' simply checks if the coordinate we are in is th
 
 ### Overall comments
 
-Although the way it behaves can be seen in the video, we get a little issue which is that walls need to have different costs so that the car does not bump into them. 
+Although the way it behaves can be seen in the video, we get a little issue which is that walls need to have different costs so that the car does not bump into them. When we select a target which makes the car turn around several times and get close to walls, as we have that cost issue mentioned before, the car does not leave enough space with the wall, and crashes when approaching it.
 
 
 ### Video 4
-[LINK]()
+[LINK](https://youtu.be/8T0vAxs9BuM?si=BoA7kF1Z4Phbpw3n)
