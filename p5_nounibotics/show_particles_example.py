@@ -40,6 +40,7 @@ def main():
     particles = initialize_particles()
     print(F"Particles:\n{particles}")
    
+    #Ahora lo que queda por hacer es ver a donde apunta con el laser cada particula y comparar esto con los datos del robot de su laser. Los que mas se asemejen se mantieney los que no se descartan. SE usa lo de dda para los láseres virtuales.
     # Show the particles in the GUI
     gui.showParticles(particles [:,:3])
 
