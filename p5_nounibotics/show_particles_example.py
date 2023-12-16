@@ -4,7 +4,7 @@ from HAL import HAL
 import MAP
 import time
 
-N_PARTICLES = 3
+N_PARTICLES = 10
 
 map = MAP.getMap()
 
@@ -88,8 +88,8 @@ def compute_particle_weights(particles, robot_laser_data, map):
 
     for particle in particles:
         particle_laser_data = simulate_lasers(particle, map)
-        print(robot_laser_data)
-        print(particle_laser_data)
+        #print(robot_laser_data)
+        #print(particle_laser_data)
         # Ensure that both particle_laser_data and robot_laser_data are non-empty
         if len(particle_laser_data) == 0 or len(robot_laser_data) == 0:
             similarity = 0.0
@@ -109,10 +109,13 @@ def compute_particle_weights(particles, robot_laser_data, map):
     return weights
 
 
-def resample_particles(particles, weights):
-    """ Resamplea las partículas basándose en sus pesos. """
-    indices = np.random.choice(np.arange(len(particles)), size=N_PARTICLES, replace=True, p=weights)
-    return particles[indices]
+def resample_particles(particles, weights,threshold=0.5):
+    """Resamplea las partículas basándose en sus pesos."""
+    indices = np.where(weights >= threshold)[0]
+    if len(indices) == 0:
+        # If no particles exceed the threshold, randomly select a subset
+        indices = np.random.choice(np.arange(len(particles)), size=N_PARTICLES, replace=True)
+    return particles[indices], indices
 
 
 #Ahora lo que queda por hacer es ver a donde apunta con el
@@ -135,7 +138,7 @@ def main():
     robot.pose[0] = 1.1
     # Create a GUI object and link it with the robot
     gui = GUI(robot=robot)
-    print(F"Robot pose: {gui.getRobotPose()}")
+    #print(F"Robot pose: {gui.getRobotPose()}")
 
     # Set a small velocity
     robot.setV(0.3)
@@ -161,7 +164,7 @@ def main():
             particles[i, 0] += v * np.cos(particles[i, 2])
             particles[i, 1] += v * np.sin(particles[i, 2])
             particles[i, 2] += w
-
+            
 
         #------------Particle weight-----------------------------------
         '''
@@ -192,7 +195,7 @@ def main():
         gui.showParticles(particles[:, :3],weights)
         '''
         # Compute particle weights based on similarity to robot's laser data
-        weights = compute_particle_weights(particles, robot_laser_data, map)
+        #weights = compute_particle_weights(particles, robot_laser_data, map)
 
         # Resample particles based on their weights
         #particles = resample_particles(particles, weights)
@@ -203,7 +206,8 @@ def main():
         gui.showParticles(particles [:,:3])
 
         # Update the GUI image and wait
-        #gui.updateGUI(block=True)
+        gui.updateGUI(block=True)
+
 
     
 if __name__ == '__main__':
