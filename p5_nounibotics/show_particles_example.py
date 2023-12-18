@@ -41,22 +41,6 @@ def initialize_particles():
 
     return particles
 '''
-def dda_algorithm(x0, y0, x1, y1):
-    """ DDA algorithm for line drawing between two points (x0, y0) and (x1, y1)."""
-    dx = x1 - x0
-    dy = y1 - y0
-    steps = max(abs(dx), abs(dy))
-    x_increment = dx / steps
-    y_increment = dy / steps
-    x, y = x0, y0
-    points = []
-
-    for _ in range(steps):
-        points.append((int(round(x)), int(round(y))))
-        x += x_increment
-        y += y_increment
-
-    return points
 
 def simulate_lasers(particle, map):
     """ Simula los láseres virtuales para una partícula en el mapa usando el algoritmo DDA."""
@@ -89,31 +73,6 @@ def simulate_lasers(particle, map):
 
 
 
-def compute_particle_weights(particles, robot_laser_data, map):
-    """ Calcula los pesos de las partículas basándose en la similitud con los datos del láser del robot."""
-    weights = []
-
-    for particle in particles:
-        particle_laser_data = simulate_lasers(particle, map)
-        #print(robot_laser_data)
-        #print(particle_laser_data)
-        # Ensure that both particle_laser_data and robot_laser_data are non-empty
-        if len(particle_laser_data) == 0 or len(robot_laser_data) == 0:
-            similarity = 0.0
-        else:
-            # Compute cosine similarity
-            similarity = np.dot(particle_laser_data, robot_laser_data) / (
-                np.linalg.norm(particle_laser_data) * np.linalg.norm(robot_laser_data)
-            )
-
-        # Convert similarity to a weight between 0 and 1
-        weight = 0.5 + 0.5 * similarity  # Scales similarity to the range [0, 1]
-        weights.append(weight)
-
-    weights = np.array(weights)
-    weights /= np.sum(weights)  # Normalizar pesos para que sumen 1
-
-    return weights
 
 
 def resample_particles(particles, weights,threshold=0.5):
@@ -123,6 +82,7 @@ def resample_particles(particles, weights,threshold=0.5):
         # If no particles exceed the threshold, randomly select a subset
         indices = np.random.choice(np.arange(len(particles)), size=N_PARTICLES, replace=True)
     return particles[indices], indices
+
 '''
 
 def compute_particle_weights(particles):
@@ -136,7 +96,29 @@ def compute_particle_weights(particles):
     weights = np.arange(particles.shape[0], dtype=np.float32)
     return weights
 
+'''
+def compute_particle_weights(particles):
+    """ Calcula los pesos de las partículas basándose en la similitud con los datos del láser del robot."""
+    weights = []
 
+    for particle in particles:
+        particle_laser_data = simulate_lasers(particle, robot)
+        robot_laser_data = HAL.getLaserData()
+        if len(particle_laser_data) == 0 or len(robot_laser_data) == 0:
+            similarity = 0.0
+        else:
+            similarity = np.dot(particle_laser_data, robot_laser_data) / (
+                np.linalg.norm(particle_laser_data) * np.linalg.norm(robot_laser_data)
+            )
+
+        weight = 0.5 + 0.5 * similarity  # Scales similarity to the range [0, 1]
+        weights.append(weight)
+
+    weights = np.array(weights)
+    weights /= np.sum(weights)  # Normalizar pesos para que sumen 1
+
+    return weights
+'''
 
 def resample_particles(old_particles, weights):
     """ Resample the set of particles given their weights. """
@@ -184,7 +166,22 @@ def propagate_particles(particles):
     return particles
 
 
+def simulate_lasers(particle):
+    """ Simula los láseres virtuales para una partícula en el mapa usando el algoritmo DDA."""
+    x, y, yaw = particle[:3]
+    laser_angles = np.linspace(-np.pi / 2, np.pi / 2, num=180)  # Ángulos del láser
+    laser_distances = []
 
+    for angle in laser_angles:
+       
+        laser_data = HAL.getLaserData()
+
+        for point in laser_data:
+            if not (np.isinf(point[0]) and np.isinf(point[1])):
+                laser_distances.append(np.sqrt(point[0]**2 + point[1]**2))
+                break
+
+    return np.array(laser_distances)
 
 #Ahora lo que queda por hacer es ver a donde apunta con el
 # laser cada particula y comparar esto con los datos del 
@@ -212,8 +209,7 @@ def main():
     robot.setV(0.3)
     robot.setW(0.8)
     
-    # Store the time of the last pose update
-    last_update_time = time.time()
+    
     while True:
         # Get some laser data and show it in the GUI
         robot_laser_data = robot.getLaserData()
@@ -227,44 +223,8 @@ def main():
         #----------Particles mimic movement---------------------------------------------
         # Move the particles to mimic the movement of the robot
         particles = propagate_particles(particles)
-        '''
-        for i in range(N_PARTICLES):
-            v = 0.3 
-            w = 0.8 
 
-            particles[i, 0] += v * np.cos(particles[i, 2])
-            particles[i, 1] += v * np.sin(particles[i, 2])
-            particles[i, 2] += w
-            
-        '''
         #------------Particle weight-----------------------------------
-        '''
-        car_yaw = gui.getRobotPose()[2]
-        print(car_yaw)
-        coincidence_particles= []
-        
-        for particle in particles:
-            x, y, yaw = particle[:3]
-            #print(F"Laser X, Y, yaw:\n{x,y,yaw}")
-            if ((car_yaw <= 0.5 + yaw) and (car_yaw >= yaw - 0.5)):
-                coincidence_particles.append(particle)
-                print("DENTROOO")
-                print(particle)
-        
-        # Iterar sobre el tiempo
-        for _ in range(10):  # Puedes ajustar el número de iteraciones según tus necesidades
-            # Calcular pesos de las partículas
-            weights = compute_particle_weights(particles, robot_laser_data, map)
-
-            # Resamplear partículas
-            particles = resample_particles(particles, weights)
-
-            # Actualizar la GUI y esperar
-            gui.updateGUI(block=True)
-
-
-        gui.showParticles(particles[:, :3],weights)
-        '''
         # Compute particle weights based on similarity to robot's laser data
         #weights = compute_particle_weights(particles, robot_laser_data, map)
         weights = compute_particle_weights(particles)
