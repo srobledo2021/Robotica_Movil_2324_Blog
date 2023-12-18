@@ -4,7 +4,14 @@ from HAL import HAL
 import MAP
 import time
 
-N_PARTICLES = 10
+N_PARTICLES = 100
+
+# Constant robot velocities
+LINEAR_VEL = 0.5
+ANGULAR_VEL = 0.8
+
+# Time of the last propagation of the particles
+last_update_time = time.time()
 
 map = MAP.getMap()
 
@@ -33,7 +40,7 @@ def initialize_particles():
         particles[i,:3] = particle
 
     return particles
-
+'''
 def dda_algorithm(x0, y0, x1, y1):
     """ DDA algorithm for line drawing between two points (x0, y0) and (x1, y1)."""
     dx = x1 - x0
@@ -116,6 +123,67 @@ def resample_particles(particles, weights,threshold=0.5):
         # If no particles exceed the threshold, randomly select a subset
         indices = np.random.choice(np.arange(len(particles)), size=N_PARTICLES, replace=True)
     return particles[indices], indices
+'''
+
+def compute_particle_weights(particles):
+    """ Compute the weight of each particle.
+        This function should generate a virtual laser measurement
+        for each particle and compute the error (difference)
+        between the virtual laser and the actual sensor measurement.
+
+        This example function just generates silly weights.
+    """
+    weights = np.arange(particles.shape[0], dtype=np.float32)
+    return weights
+
+
+
+def resample_particles(old_particles, weights):
+    """ Resample the set of particles given their weights. """
+    # Allocate space for new particles
+    particles = np.zeros((N_PARTICLES, 3))
+
+    # Normalize the weights so the total sum is 1
+    weights /= np.sum(weights)
+    print(F"Normalized weights: {weights}")
+
+    # Get random indices from the list of particles
+    selected_idx = np.random.choice(N_PARTICLES, replace=True, size=N_PARTICLES, p=weights)
+    print(F"Selected indices:\n{selected_idx}")
+    print(F"Selected particles:\n{old_particles[selected_idx]}")
+    particles = old_particles[selected_idx]
+    return particles
+
+def update_particle_pose(particle, dt):
+    """ Update the pose of a particle in the dt period.
+        Add a random Gaussian noise to the movement.
+    """
+    yaw = particle[2]
+    # Estimate robot movement in dt according to the set velocities
+    dx = dt * LINEAR_VEL * np.cos(yaw)
+    dy = dt * LINEAR_VEL * np.sin(yaw)
+    dyaw = dt * ANGULAR_VEL
+    # Add this movement to the particle, with an extra Gaussian noise
+    particle[0] += dx + np.random.normal(0.0, 0.02)
+    particle[1] += dy + np.random.normal(0.0, 0.02)
+    particle[2] += dyaw + np.random.normal(0.0, 0.01)
+
+def propagate_particles(particles):
+    """ Estimate the movement of the robot since the last update
+        and propagate the pose of all particles according to this movement.
+    """
+    global last_update_time
+    # Get the time diference since the last update
+    current_time = time.time()
+    dt = current_time - last_update_time
+    # Update all particles according to dt
+    for p in particles:
+        update_particle_pose(p, dt)
+    # Reset the update time
+    last_update_time = current_time
+    return particles
+
+
 
 
 #Ahora lo que queda por hacer es ver a donde apunta con el
@@ -144,7 +212,8 @@ def main():
     robot.setV(0.3)
     robot.setW(0.8)
     
-
+    # Store the time of the last pose update
+    last_update_time = time.time()
     while True:
         # Get some laser data and show it in the GUI
         robot_laser_data = robot.getLaserData()
@@ -157,6 +226,8 @@ def main():
 
         #----------Particles mimic movement---------------------------------------------
         # Move the particles to mimic the movement of the robot
+        particles = propagate_particles(particles)
+        '''
         for i in range(N_PARTICLES):
             v = 0.3 
             w = 0.8 
@@ -165,7 +236,7 @@ def main():
             particles[i, 1] += v * np.sin(particles[i, 2])
             particles[i, 2] += w
             
-
+        '''
         #------------Particle weight-----------------------------------
         '''
         car_yaw = gui.getRobotPose()[2]
@@ -196,9 +267,9 @@ def main():
         '''
         # Compute particle weights based on similarity to robot's laser data
         #weights = compute_particle_weights(particles, robot_laser_data, map)
-
+        weights = compute_particle_weights(particles)
         # Resample particles based on their weights
-        #particles = resample_particles(particles, weights)
+        particles = resample_particles(particles, weights)
     
         #-------------LAST THING TO DO IS JUST PRINT------------------------------------------------------------------
         
