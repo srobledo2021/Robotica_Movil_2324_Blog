@@ -1201,5 +1201,7 @@ particles = initialize_particles()
 ```
 It does not only display particles randomly, but also takes into account that the cannot be displayed on the black spaces, which represent obstacles such as tables or walls.
 
+After calling that function, once the map is shown, it should look more or less like this: 
+![image](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/ca038e9f-1adf-455f-879b-70f0e1fc11f1)
 
 
