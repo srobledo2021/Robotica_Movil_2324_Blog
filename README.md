@@ -1243,7 +1243,7 @@ Particles keep moving throughout the map the same way as the robot
 Depending on the similarity between laser data captured by the robot and laser data captured as 'virual laser' on each particle, we can give weights to that relation. This is done in the compute_particle_weights() function, which afterwards calls two other functions: get_laser_data() and virtual_laser_beam() that can also be found in the HAL.py file, but this ones have been changed so that we can 'simulate' each particle having lasers.
 
 With those weights we can then resample particles so that we can update them taking into account those weigts:
-
+```python3
         # Resample particles based on their weights
         particles = resample_particles(particles, weights)
         
