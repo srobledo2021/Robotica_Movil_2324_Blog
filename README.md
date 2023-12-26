@@ -20,6 +20,11 @@
   - [API](#API-4)
   - [Steps](#Steps-4)
   - [Video](#Video-4)
+- [Exercise 5: Monte Carlo Laser Localization](#Monte-Carlo-Laser-Localization)
+  - [Introduction](#Introduction-5)
+  - [API](#API-5)
+  - [Steps](#Steps-5)
+  - [Video](#Video-5)
 ----------------------------------------------------------------------------------
 # Vacuum cleaner
 
@@ -1150,3 +1155,45 @@ Although the way it behaves can be seen in the video, we get a little issue whic
 
 ### Video 4
 [LINK](https://youtu.be/8T0vAxs9BuM?si=BoA7kF1Z4Phbpw3n)
+
+-------------------------------------------------------------------------
+
+# Monte Carlo Laser Localization
+
+### Introduction 5
+
+The aim of this practice is to develop a visual localisation algorithm based on the particle filter.
+
+### API 5
+
+
+- from HAL import HAL - to import the HAL library class. This class contains the - - functions that receives information from the webcam.
+- from GUI import GUI - to import the GUI (Graphical User Interface) library class. This class contains the functions used to view the debugging information, like image widgets.
+- HAL.getImage() - to get the image
+- HAL.setV() - to set the linear speed
+- HAL.setW() - to set the angular velocity
+- HAL.getPose3d().x - to get the position of the robot (x coordinate)
+- HAL.getPose3d().y - to obtain the position of the robot (y coordinate)
+-   HAL.getPose3d().yaw - to get the orientation of the robot with regarding the map
+- GUI.showImage() - allows you to view a debug image or with relevant information
+- GUI.showParticles(particles) - shows the particles on the map. It is necessary to pass a list of particles as an argument. Each particle must be a list with [positionx, positiony, angle].
+
+
+------------------------------------------------------------------------
+
+### Steps 5
+
+Taking into account that at the moment the exercise was being done, unibotics webpage did not work properly, we were given the 'HAL.py','GUI.py' and 'MAP.py' libraries to work with. As so, we were given some example codes related to the robot movement, the way particles are shown, the way the laser is shown as well as the propagation of the particles.
+
+Knowing all of this, now it is time to build up our code!
+
+From the unibotics page we can get this diagram which will help us with the code:
+
+<img width="240" alt="paticle_filter_diagram" src="https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/e2930e4c-82d1-4b36-9fad-5b8eb3a44f50">
+
+
+
+
+
+
+
