@@ -1202,6 +1202,55 @@ particles = initialize_particles()
 It does not only display particles randomly, but also takes into account that the cannot be displayed on the black spaces, which represent obstacles such as tables or walls.
 
 After calling that function, once the map is shown, it should look more or less like this: 
+
+
 ![image](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/ca038e9f-1adf-455f-879b-70f0e1fc11f1)
 
 
+Next step is to stablish robot movement, which has been done this way:
+```python3
+robot = HAL()
+# Set a custom initial pose
+robot.pose[0] = 1.1
+# Create a GUI object and link it with the robot
+gui = GUI(robot=robot)
+
+# Set a small velocity
+robot.setV(0.3)
+robot.setW(0.8)
+```
+Here we create the robot and set a spawnpoint, so that after that, with the linear and angular speeds that have been selected, it can keep doing circles until it discovers its position.
+
+The rest of the code is done in a while loop so that we can work with the particles.
+
+```python3
+while True:
+        # Get some laser data and show it in the GUI
+        robot_laser_data = robot.getLaserData()
+        gui.showLaser(robot_laser_data)
+```
+Get robot laser info and display it.
+```python3
+        #----------Particles movement---------------------------------
+        particles = propagate_particles(particles)
+```
+Particles keep moving throughout the map the same way as the robot
+```python3
+        #------------Particle weight-----------------------------------
+        # Compute particle weights based on similarity to robot's laser data
+        weights = compute_particle_weights(particles, robot_laser_data)
+```
+Depending on the similarity between laser data captured by the robot and laser data captured as 'virual laser' on each particle, we can give weights to that relation. This is done in the compute_particle_weights() function, which afterwards calls two other functions: get_laser_data() and virtual_laser_beam() that can also be found in the HAL.py file, but this ones have been changed so that we can 'simulate' each particle having lasers.
+
+With those weights we can then resample particles so that we can update them taking into account those weigts:
+
+        # Resample particles based on their weights
+        particles = resample_particles(particles, weights)
+        
+        #-------------LAST THING TO DO IS JUST PRINT-------------------
+        # Show the particles in the GUI
+        gui.showParticles(particles [:,:3])
+
+        # Update the GUI image and wait
+        gui.updateGUI(block=True)
+```
