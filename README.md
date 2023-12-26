@@ -1192,8 +1192,14 @@ From the unibotics page we can get this diagram which will help us with the code
 <img width="240" alt="paticle_filter_diagram" src="https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/e2930e4c-82d1-4b36-9fad-5b8eb3a44f50">
 
 
+Here is the structure of the main() funtion:
 
-
+First of all, we need to randomly display particles throughout the map and that is what we will be doing in this function:
+```python3
+# Initialize random particles
+particles = initialize_particles()
+```
+It does not only display particles randomly, but also takes into account that the cannot be displayed on the black spaces, which represent obstacles such as tables or walls.
 
 
 
