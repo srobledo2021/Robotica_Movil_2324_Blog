@@ -1259,7 +1259,7 @@ With those weights we can then resample particles so that we can update them tak
 
 ### Update
 
-Now this, is our first version, but taking into account the ammount of time the computer needs to run the code, (as it has to simulate taking 180 values for the virtual laser of each particle and compare them to the robot laser) we will be measuring less distances from the laser. This is why we decreased from 180 to 18 measurements. This is the way we are implementing it in our code:
+Now this, is our first version, but taking into account the amount of time the computer needs to run the code, (as it has to simulate taking 180 values for the virtual laser of each particle and compare them to the robot laser) we will be measuring less distances from the laser. This is why we decreased from 180 to 18 measurements. This is the way we are implementing it in our code:
 
 Every iteration in the while loop, gets laser data from the robot. However, we will just be taking 18 measurements (one of each ten ):
 
