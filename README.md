@@ -1255,6 +1255,9 @@ With those weights we can then resample particles so that we can update them tak
         gui.updateGUI(block=True)
 ```
 
+-----------------------------------------------------------------------------------------------------------
+
+Difference between laser quth 180 and 18 (precise or not) ...... (what changes did I make)......
 
 ### Video 5
 [Link](https://youtu.be/Qx_BPDKWfIY)
