@@ -1254,3 +1254,7 @@ With those weights we can then resample particles so that we can update them tak
         # Update the GUI image and wait
         gui.updateGUI(block=True)
 ```
+
+
+### Video 5
+[Link](https://youtu.be/Qx_BPDKWfIY)
