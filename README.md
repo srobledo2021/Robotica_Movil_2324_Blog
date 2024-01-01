@@ -1305,5 +1305,13 @@ Now we have arrays that can be compared as they have the same measurements.
 
 By doing this we can spawn more and more particles at the very beginning.
 
+The whole final code, once launched should look like this:
+
+![image](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/3a1ecb38-6bfc-494d-ac34-4b633942f81f)
+![image](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/1eb185de-3817-4a48-9dc3-10488a5296cc)
+![image](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/44e748d2-8740-4a2e-8e6a-acd010be5db7)
+![image](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/80527b29-f6c9-42d6-8e6e-f06fea514627)
+
+
 ### Video 5
 [Link](https://youtu.be/Qx_BPDKWfIY)
