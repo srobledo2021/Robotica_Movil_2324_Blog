@@ -1253,7 +1253,7 @@ def compute_particle_weights(particles,robot_laser_data):
         particle_laser_data = get_laser_data(particle)
         #print(F"particle_laser_data: {particle_laser_data}")
         # Difference between robot laser and particle
-        diff = abs(robot_laser_data - particle_laser_data)**2
+        diff = abs(robot_laser_data - particle_laser_data)
         mean= np.mean(diff)
         weights.append(1/mean)
 
