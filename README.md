@@ -1242,10 +1242,31 @@ Particles keep moving throughout the map the same way as the robot
 ```
 Depending on the similarity between laser data captured by the robot and laser data captured as 'virual laser' on each particle, we can give weights to that relation. This is done in the compute_particle_weights() function, which afterwards calls two other functions: get_laser_data() and virtual_laser_beam() that can also be found in the HAL.py file, but this ones have been changed so that we can 'simulate' each particle having lasers.
 
+The way compute_particle_weights() works is by assigning weights to the particles, once the have all been compared. To do so, we need to get distances for both lasers ( robot and a particle) and if we get the difference, we can conclude that the less difference, the higher weight it is assigned ( as it means that laser data is much more similar or not). This is why we are doing the mean of all lasers and then get the inverse.
+```python3
+def compute_particle_weights(particles,robot_laser_data):
+    
+    weights = []
+
+    for particle in particles:
+        # Current laser particle:
+        particle_laser_data = get_laser_data(particle)
+        #print(F"particle_laser_data: {particle_laser_data}")
+        # Difference between robot laser and particle
+        diff = abs(robot_laser_data - particle_laser_data)**2
+        mean= np.mean(diff)
+        weights.append(1/mean)
+
+    return weights
+```
+
 With those weights we can then resample particles so that we can update them taking into account those weigts:
 ```python3
         # Resample particles based on their weights
         particles = resample_particles(particles, weights)
+```
+
+```python3
         
         #-------------LAST THING TO DO IS JUST PRINT-------------------
         # Show the particles in the GUI
