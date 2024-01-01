@@ -1257,7 +1257,32 @@ With those weights we can then resample particles so that we can update them tak
 
 -----------------------------------------------------------------------------------------------------------
 
-Difference between laser quth 180 and 18 (precise or not) ...... (what changes did I make)......
+### Update
+
+Now this, is our first version, but taking into account the ammount of time the computer needs to run the code, (as it has to simulate taking 180 values for the virtual laser of each particle and compare them to the robot laser) we will be measuring less distances from the laser. This is why we decreased from 180 to 18 measurements. This is the way we are implementing it in our code:
+
+Every iteration in the while loop, gets laser data from the robot. However, we will just be taking 18 measurements (one of each ten ):
+
+```python3
+# Get some laser data and show it in the GUI
+robot_laser_data = robot.getLaserData()
+rob_laser_dat_red = robot_laser_data[::10]
+rob_laser_dat_red_18 = rob_laser_dat_red[:18]
+```
+We are doing the exact same thing in get_laser_data(): 
+```python3
+N_LASERS_PARTICLE = 18
+    .
+    .
+    .
+get_laser_data():
+    for beam_angle in range(N_LASERS_PARTICLE):
+
+```
+
+Now we have arrays that can be compared as they have the same measurements.
+
+By doing this we can spawn more and more particles at the very beginning.
 
 ### Video 5
 [Link](https://youtu.be/Qx_BPDKWfIY)
