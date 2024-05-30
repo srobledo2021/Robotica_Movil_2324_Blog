@@ -1074,7 +1074,7 @@ new_target_map = tuple(MAP.rowColumn(goal_pose))
 As so, we get the starting position and the goal position with the actual map coordinates.
 
 After that we need to define the grid. We will be using a BFS search. The algorithm works by assigning weights to a grid of cells. Given the source and target, the algorithm starts from the target node and moves outwards like a ripple, while progressively assigning weights to the neighboring cells.
-```
+```python3
 #Get grid and show it
 grid = get_grid(map_data, start_cell,new_target_map)
 grid_normalized = normalize_grid(grid)
@@ -1084,7 +1084,7 @@ We get the grid from *get_grid()* and then normalize it before showing it.
 In this function we need to create a priority queue. The way we define the grid is by expanding neighbors near the target.
 
 First of all we assign no cost for the target:
-```
+```python3
 # Create the grid to keep costs
 grid = np.full(map_array.shape, 255)
 
@@ -1092,7 +1092,7 @@ grid = np.full(map_array.shape, 255)
 grid[target_map[1], target_map[0]] = 0
 ```
 And fromt there we use several costs for different directions as so:
-```
+```python3
 HOR_AND_VERT_COST = 1
 DIAGONAL_COST = math.sqrt(2)
 
@@ -1107,7 +1107,7 @@ DIAGONAL_COST = math.sqrt(2)
 ![Captura de pantalla 2024-05-30 102243](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/afc61ab8-05c2-489c-a7b3-dfbe21fbdfc8)
 
 When an obstacle is reached, this is the way it is handled so that the path we are creating later does not go through obstacles:
-```
+```python3
 # Increase weights for obstacle cells
 if map_array[neighbor[1], neighbor[0]] == 0:
     new_cost += 50
@@ -1128,7 +1128,7 @@ Now that whe have all of this done, it is time to navigate until we reach the ta
 
 Notice that to make it smoother, we are selecting those 2 points with 5 points distance. So that to select each local goal point, the code iterates 5 by 5.
 
-```
+```python3
 NAVIGATION_STEP = 5
 for i in range(0, len(path) - 1, NAVIGATION_STEP):
       target_world = gridToWorld(path[i + 1])
@@ -1138,18 +1138,18 @@ for i in range(0, len(path) - 1, NAVIGATION_STEP):
 To reach every local target< we are using this logic:
 
 We get x,y and theta:
-```
+```python3
 current_pos = HAL.getPose3d()
 current_x, current_y, current_yaw = current_pos.x, current_pos.y, current_pos.yaw
 ```
 Then we get the distance to that point:
-```
+```python3
 distance = math.sqrt((target_x - current_x) ** 2 + (target_y - current_y) ** 2)
 ```
 ![An-example-of-Euclidean-distance-between-two-objects-on-variables-X-and-Y](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/31b9c758-45bb-42ea-a374-e5d5d7fdd915)
 
 To make the car spin and face the point we are using this logic:
-```
+```python3
 # Get real angle to target
 angle_to_target = math.atan2(target_y - current_y, target_x - current_x)
 ```
@@ -1157,19 +1157,19 @@ angle_to_target = math.atan2(target_y - current_y, target_x - current_x)
 ![atan_01](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/ae24a273-d3ae-4686-896d-f652ecb58ffa)
 
 As we keep iterating, we want to keep decreasing the difference between where the car is facing and the target:
-```
+```python3
 # Get angles needed for the car to turn and face target
 angle_diff = angle_to_target - current_yaw
 ```
 If we normalize the angle, it will always be between -pi and pi. With this logic, we avoid making the car spin with non sense:
-```
+```python3
 # Normalize the angle between -pi and pi
 angle_diff = (angle_diff + math.pi) % (2 * math.pi) - math.pi
 
 ```
 
 We have also implemented a function that stops the car once the final goal is reached:
-```
+```python3
 def stop_car():
   while True:
     HAL.setV(0)
@@ -1178,7 +1178,7 @@ def stop_car():
 ----------------------------------------------------------------------------
 
 Taking all of this into account, our while loop will look like this:
-```
+```python3
 while True:
     # Navigate along the path
     navigate_path(path)
