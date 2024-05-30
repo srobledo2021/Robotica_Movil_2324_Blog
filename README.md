@@ -15,7 +15,7 @@
   - [API](#API-3)
   - [Steps](#Steps-3)
   - [Video](#Video)
-- [Exercise 4: Obstacle Avoidance](#Global-Navigation)
+- [Exercise 4: Global Navigation](#Global-Navigation)
   - [Introduction](#Introduction-4)
   - [API](#API-4)
   - [Steps](#Steps-4)
@@ -1054,103 +1054,143 @@ array = MAP.getMap('/RoboticsAcademy/exercises/static/exercises/global_navigatio
 
 ### STEPS 4
 
-Before iterating in the while loop, we need to get the map from the Unibotics files:
+To start this practice, the first thing needed is to get the map from the Unibotics files:
 ```python
 map_url = '/RoboticsAcademy/exercises/static/exercises/global_navigation_newmanager/resources/images/cityLargenBin.png'
 map_data = MAP.getMap(map_url)
 ```
-Define the grid:
-```
-grid = np.full(map_data.shape, 255)
-```
-Then we need to get the position where the car is placed at the very beginning and get the target that has to be reached.
+Once we have the map, we can get the position where the car is placed at the very beginning and get the target that has to be reached.
 
 The way this is implemented is:
 ```python3
-#---------------------------------------
+# start pose
+start_pose =HAL.getPose3d()
+pos=[start_pose.x, start_pose.y]
 # get the clicked target
 goal_pose  = GUI.getTargetPose()
-#get coordinates for actual location in map
+# get coordinates for actual location in map
 new_target_map = tuple(MAP.rowColumn(goal_pose))
-#start pose
-start_pose =(HAL.getPose3d().x, HAL.getPose3d().y)
-#---------------------------------------
-# Convert world coordinates to map coordinates
-start_cell = MAP.rowColumn(start_pose)
-goal_cell = MAP.rowColumn(new_target_map)
 ```
 As so, we get the starting position and the goal position with the actual map coordinates.
 
-In our main loop, we are following this algorythm to generate the grid with actual values, then get the best path and after that, move to the target. The way it is implemented is as so:
-
-Inside a 'while' loop, first of all we implement a BFS algorythm to get the grid and assign costs to its cells: 
-```python3
-grid = bfs_search(map_data, new_target_map, start_pos)
+After that we need to define the grid. We will be using a BFS search. The algorithm works by assigning weights to a grid of cells. Given the source and target, the algorithm starts from the target node and moves outwards like a ripple, while progressively assigning weights to the neighboring cells.
 ```
-This are the steps we are following to implement the algorythm(all defined in the bfs_search function):
-Step1: insert Target Node into priority queue
-Step2: c = pop node from priority queue
-Step3: if c == start node End
-Step4: if c == obstacle Save to another list and goto Step2
-Step5: assign weight to neighbors of c if previously unassigned
-Step6: insert neighbors of c to priority queue
-Step7: goto Step2
-
-
-After that, we need to get the path with the lowest cost from the actual position to the goal. We will implement this in our function:
-```python3
-path = get_path_coords(grid, start_pos)
-```
-Then we normalize the grid using 'normalize_grid' function and show it on display afterwards:
-```python3
+#Get grid and show it
+grid = get_grid(map_data, start_cell,new_target_map)
 grid_normalized = normalize_grid(grid)
 GUI.showNumpy(grid_normalized)
 ```
-This is how we get the grid normalized:
-```python
-def normalize_grid(grid):
-    max_grid = np.max(grid)
-    return np.clip(grid * 255 / max_grid, 0, 255).astype('uint8')
+We get the grid from *get_grid()* and then normalize it before showing it.
+In this function we need to create a priority queue. The way we define the grid is by expanding neighbors near the target.
+
+First of all we assign no cost for the target:
 ```
-After all of that the map should look like this(dependind on the goal selected):
+# Create the grid to keep costs
+grid = np.full(map_array.shape, 255)
 
-![image](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/73acdc10-3f46-4fc8-a67a-a2ab39076134)
-
-
-----------------------------------------------------------------------------------------
-
-
-Now the strategy that we are using is to simplify the whole path and split it into little vectors so that it is much easier to navegate.
-The way we are implementig it is by doing this:
-```python
-resulting_vectors = path_into_vectors(path,new_target_map)
-vectors_from_path = [[x, y] for coord in resulting_vectors for x, y in coord]
-result_path = vectors_from_path[1:]
+# No cost for target node
+grid[target_map[1], target_map[0]] = 0
 ```
-The function 'path_into_vectors' gets the whole path that we already made before and checks for similar coordinates so that instead off having a straight line with 30 coordinates, it has a vector with the origin and end of it. 
+And fromt there we use several costs for different directions as so:
+```
+HOR_AND_VERT_COST = 1
+DIAGONAL_COST = math.sqrt(2)
 
-By doing this, we are able to simplify the whole path.
+# Directions for the grid (N, E, S, W, NE, NW, SE, SW)
+directions = [(-1, 0), (0, 1), (1, 0), (0, -1), (-1, 1), (-1, -1), (1, 1), (1, -1)]
 
-----------------------------------------------------------
-Now it is time to navigate, for that we are using one easy algorythm which is rotating (to search for the next coordinate) and then move until the car reaches it. We are doing it this way:
-```python3
-while True:
-        for i in range(len(result_path)):
-            orientate(result_path[i][0], result_path[i][1])
-            move_forward(result_path[i][0], result_path[i][1])
-            #Reach goal
-            if (check_reached_goal(result_path) == True):
+# Corresponding movement costs for the directions
+HOR_AND_VERT_COST = 1
+DIAGONAL_COST = math.sqrt(2)
+```
+
+![Captura de pantalla 2024-05-30 102243](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/afc61ab8-05c2-489c-a7b3-dfbe21fbdfc8)
+
+When an obstacle is reached, this is the way it is handled so that the path we are creating later does not go through obstacles:
+```
+# Increase weights for obstacle cells
+if map_array[neighbor[1], neighbor[0]] == 0:
+    new_cost += 50
+else:
+    # Check the neighbors of this neighbor
+    for direction2 in directions:
+        neighbor2 = (neighbor[0] + direction2[0], neighbor[1] + direction2[1])
+        if 0 <= neighbor2[1] < map_array.shape[0] and 0 <= neighbor2[0] < map_array.shape[1]:
+            # Increase cost when neighbor is near an obstacle
+            if map_array[neighbor2[1], neighbor2[0]] == 0:
+                new_cost += 30
                 break
 ```
-The way 'orientate' is being done is by gettting to know the yaw of the car so that comparing it afterwards with the angle of the goal coordinate, we can iterate to reduce the error (the difference) and spin the car until it faces the coordinate we are searching for.
 
-The way 'move_forward' is being done is by comparing the actual position with the actual target coordinate and move in a straight line until the goal is reached.
+Once we have the whole grid, it is time to get the path the robot will be following. We define path as an array to keep the coordinates by comparing costs and keeping the lowest ones iterativelly.
 
-The fuction 'check_reached_goal' simply checks if the coordinate we are in is the goal selected on the map or not. And if so, it stops iterating.
+Now that whe have all of this done, it is time to navigate until we reach the target. For navigating effectively, we assign local goal points which eventually lead to the final destination. These local goal points can be selected by choosing 2 points, which occur one after the another recursively.
 
-### Overall comments
+Notice that to make it smoother, we are selecting those 2 points with 5 points distance. So that to select each local goal point, the code iterates 5 by 5.
 
-Although the way it behaves can be seen in the video, we get a little issue which is that walls need to have different costs so that the car does not bump into them. When we select a target which makes the car turn around several times and get close to walls, as we have that cost issue mentioned before, the car does not leave enough space with the wall, and crashes when approaching it.
+```
+NAVIGATION_STEP = 5
+for i in range(0, len(path) - 1, NAVIGATION_STEP):
+      target_world = gridToWorld(path[i + 1])
+      target_x, target_y = target_world
+      navigate_to_point(target_x, target_y)
+```
+To reach every local target< we are using this logic:
+
+We get x,y and theta:
+```
+current_pos = HAL.getPose3d()
+current_x, current_y, current_yaw = current_pos.x, current_pos.y, current_pos.yaw
+```
+Then we get the distance to that point:
+```
+distance = math.sqrt((target_x - current_x) ** 2 + (target_y - current_y) ** 2)
+```
+![An-example-of-Euclidean-distance-between-two-objects-on-variables-X-and-Y](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/31b9c758-45bb-42ea-a374-e5d5d7fdd915)
+
+To make the car spin and face the point we are using this logic:
+```
+# Get real angle to target
+angle_to_target = math.atan2(target_y - current_y, target_x - current_x)
+```
+
+![atan_01](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/ae24a273-d3ae-4686-896d-f652ecb58ffa)
+
+As we keep iterating, we want to keep decreasing the difference between where the car is facing and the target:
+```
+# Get angles needed for the car to turn and face target
+angle_diff = angle_to_target - current_yaw
+```
+If we normalize the angle, it will always be between -pi and pi. With this logic, we avoid making the car spin with non sense:
+```
+# Normalize the angle between -pi and pi
+angle_diff = (angle_diff + math.pi) % (2 * math.pi) - math.pi
+
+```
+
+We have also implemented a function that stops the car once the final goal is reached:
+```
+def stop_car():
+  while True:
+    HAL.setV(0)
+    HAL.setW(0)
+```
+----------------------------------------------------------------------------
+
+Taking all of this into account, our while loop will look like this:
+```
+while True:
+    # Navigate along the path
+    navigate_path(path)
+    print("Goal Reached")
+    
+    # stop car when goal is reached
+    stop_car()
+```
+
+This is how the grid and the path will look like:
+
+![Captura de pantalla 2024-05-30 114810](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/59131c5f-c4b5-44b7-9156-8c89eec01958)
 
 
 ### Video 4
