@@ -1093,9 +1093,6 @@ grid[target_map[1], target_map[0]] = 0
 ```
 And fromt there we use several costs for different directions as so:
 ```python3
-HOR_AND_VERT_COST = 1
-DIAGONAL_COST = math.sqrt(2)
-
 # Directions for the grid (N, E, S, W, NE, NW, SE, SW)
 directions = [(-1, 0), (0, 1), (1, 0), (0, -1), (-1, 1), (-1, -1), (1, 1), (1, -1)]
 
@@ -1135,7 +1132,7 @@ for i in range(0, len(path) - 1, NAVIGATION_STEP):
       target_x, target_y = target_world
       navigate_to_point(target_x, target_y)
 ```
-To reach every local target< we are using this logic:
+To reach every local target we are using this logic:
 
 We get x,y and theta:
 ```python3
