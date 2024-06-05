@@ -1083,6 +1083,26 @@ GUI.showNumpy(grid_normalized)
 We get the grid from *get_grid()* and then normalize it before showing it.
 In this function we need to create a priority queue. The way we define the grid is by expanding neighbors near the target.
 
+It is important to mention that as soon as the grid finds the start position, it will stop searching. For the later navigation, we need to define cells located nearby the car at the very beginning, this is why we are expanding a bit more the grid like this:
+
+```python3
+if target_map[0] > 200 and target_map[1] > 200:
+  #print("DOWN RIGHt")
+  values2expand = (-10,-10)
+if target_map[0] <= 200 and target_map[1] > 200:
+  #print("DOWN LEFT")
+  values2expand = (10,-10)
+if target_map[0] > 200 and target_map[1] <= 200:
+  #print("UP RIGHT")
+  values2expand = (10,-10)
+if target_map[0] <= 200 and target_map[1] <= 200:
+  #print("UP LEFT")
+  values2expand = (10,10)
+```
+By doing this we are able to expand a bit more the grid into the opposite direction of the clicked zone (where we are doing the grid). Now the grid will stop increasing when that new position is reached, and not the starting point.
+
+For the algorythm itself:
+
 First of all we assign no cost for the target:
 ```python3
 # Create the grid to keep costs
@@ -1091,7 +1111,7 @@ grid = np.full(map_array.shape, 255)
 # No cost for target node
 grid[target_map[1], target_map[0]] = 0
 ```
-And fromt there we use several costs for different directions as so:
+And from there we use several costs for different directions as so:
 ```python3
 # Directions for the grid (N, E, S, W, NE, NW, SE, SW)
 directions = [(-1, 0), (0, 1), (1, 0), (0, -1), (-1, 1), (-1, -1), (1, 1), (1, -1)]
@@ -1119,20 +1139,22 @@ else:
                 break
 ```
 
-Once we have the whole grid, it is time to get the path the robot will be following. We define path as an array to keep the coordinates by comparing costs and keeping the lowest ones iterativelly.
+Once we have the whole grid, it is time to get the path and display it on screen. We define path as an array to keep the coordinates by comparing costs and keeping the lowest ones iterativelly.
 
-Now that whe have all of this done, it is time to navigate until we reach the target. For navigating effectively, we assign local goal points which eventually lead to the final destination. These local goal points can be selected by choosing 2 points, which occur one after the another recursively.
-
-Notice that to make it smoother, we are selecting those 2 points with 5 points distance. So that to select each local goal point, the code iterates 5 by 5.
+Now that whe have all of this done, it is time to navigate until we reach the target. For navigating effectively, we constantly keep checking cells around the position of the robot. By doing this we can get to know the lowest cell, keep where it is, and reach it.
+If we keep doing this we can reach the target, no matter where the robot is placed at the beggining.
 
 ```python3
-NAVIGATION_STEP = 5
-for i in range(0, len(path) - 1, NAVIGATION_STEP):
-      target_world = gridToWorld(path[i + 1])
-      target_x, target_y = target_world
-      navigate_to_point(target_x, target_y)
+while current_pos != goal_cell:
+        next_pos = get_next_position(current_pos, cost_grid)
+
+        target_world = gridToWorld(next_pos)
+        target_x, target_y = target_world
+        navigate_to_point(target_x, target_y)
+
+        current_pos = next_pos
 ```
-To reach every local target we are using this logic:
+To move and reach each cell (with a lower cost that the previous one), we are using this logic:
 
 We get x,y and theta:
 ```python3
