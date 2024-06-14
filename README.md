@@ -1101,6 +1101,9 @@ if target_map[0] <= 200 and target_map[1] <= 200:
 ```
 By doing this we are able to expand a bit more the grid into the opposite direction of the clicked zone (where we are doing the grid). Now the grid will stop increasing when that new position is reached, and not the starting point.
 
+![image](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/a4864902-36a2-4cb2-bd6e-4b43a5dafde9)
+
+
 For the algorythm itself:
 
 First of all we assign no cost for the target:
@@ -1127,22 +1130,39 @@ When an obstacle is reached, this is the way it is handled so that the path we a
 ```python3
 # Increase weights for obstacle cells
 if map_array[neighbor[1], neighbor[0]] == 0:
-    new_cost += 50
-else:
-    # Check the neighbors of this neighbor
-    for direction2 in directions:
-        neighbor2 = (neighbor[0] + direction2[0], neighbor[1] + direction2[1])
-        if 0 <= neighbor2[1] < map_array.shape[0] and 0 <= neighbor2[0] < map_array.shape[1]:
-            # Increase cost when neighbor is near an obstacle
-            if map_array[neighbor2[1], neighbor2[0]] == 0:
-                new_cost += 30
-                break
+    new_cost += 300
+    obstacle_positions.add(neighbor)
 ```
+In the end we keep all obstacles so that later we can update the grid and increase the obstacles. By doing this, we assure that the car does not bump into any wall:
 
+```python3
+for obstacle in obstacle_positions:
+        for i in range(-2, 3):
+            for j in range(-2, 3):
+                neighbor = (obstacle[0] + i, obstacle[1] + j)
+                if 0 <= neighbor[1] < grid.shape[0] and 0 <= neighbor[0] < grid.shape[1]:
+                    grid[neighbor[1], neighbor[0]] = 300  # Treat as obstacle
+```
 Once we have the whole grid, it is time to get the path and display it on screen. We define path as an array to keep the coordinates by comparing costs and keeping the lowest ones iterativelly.
 
-Now that whe have all of this done, it is time to navigate until we reach the target. For navigating effectively, we constantly keep checking cells around the position of the robot. By doing this we can get to know the lowest cell, keep where it is, and reach it.
-If we keep doing this we can reach the target, no matter where the robot is placed at the beggining.
+Now that whe have all of this done, it is time to navigate until we reach the target. For navigating effectively, we constantly keep checking cells around the position of the robot. By doing this we can get to know the lowest cell, keep where it is, and reach it:
+
+```python3
+def get_next_position(current_pos, cost_grid):
+    next_pos = None
+    less_cost = float("inf")
+
+    for direction in directions:
+        neighbor = (current_pos[0] + direction[0], current_pos[1] + direction[1])
+
+        if 0 <= neighbor[0] < cost_grid.shape[0] and 0 <= neighbor[1] < cost_grid.shape[1]:
+              cost = cost_grid[neighbor[1], neighbor[0]]
+              if cost < less_cost:
+                  less_cost = cost
+                  next_pos = neighbor
+```
+
+If we keep doing this we can reach the target, no matter where the robot is placed at the beginning.
 
 ```python3
 while current_pos != goal_cell:
@@ -1199,8 +1219,8 @@ def stop_car():
 Taking all of this into account, our while loop will look like this:
 ```python3
 while True:
-    # Navigate along the path
-    navigate_path(path)
+    navigate_to_goal(start_cell, new_target_map, grid)
+
     print("Goal Reached")
     
     # stop car when goal is reached
@@ -1209,7 +1229,7 @@ while True:
 
 This is how the grid and the path will look like:
 
-![Captura de pantalla 2024-05-30 114810](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/59131c5f-c4b5-44b7-9156-8c89eec01958)
+![image](https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/79c1ba1c-656b-4f0d-9089-93373f7c180c)
 
 
 ### Video 4
