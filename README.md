@@ -1238,7 +1238,12 @@ This is how the grid and the path will look like:
 https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/9ea4cce3-e04d-47dc-a49c-f56276fb9725
 
 
-[LINK](https://youtu.be/hv7wWpWrEPo)
+https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/d65083a8-a5aa-482b-989a-b4e34d347551
+
+
+
+https://github.com/srobledo2021/Robotica_Movil_2324_Blog/assets/113594786/0282fbee-a779-4775-912e-e65aa9495ab4
+
 
 -------------------------------------------------------------------------
 
